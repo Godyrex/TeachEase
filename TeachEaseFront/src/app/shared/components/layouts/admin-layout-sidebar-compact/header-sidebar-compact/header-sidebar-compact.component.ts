@@ -2,6 +2,12 @@ import { Component, OnInit } from "@angular/core";
 import { NavigationService } from "src/app/shared/services/navigation.service";
 import { SearchService } from "src/app/shared/services/search.service";
 import { AuthService } from "src/app/shared/services/auth.service";
+import {UserResponse} from "../../../../models/user/UserResponse";
+import {Observable} from "rxjs";
+import {SessionStorageService} from "../../../../services/user/session-storage.service";
+import {UserService} from "../../../../services/user/user.service";
+import {DomSanitizer} from "@angular/platform-browser";
+import {AuthenticationService} from "../../../../services/user/authentication.service";
 
 @Component({
   selector: "app-header-sidebar-compact",
@@ -14,7 +20,10 @@ export class HeaderSidebarCompactComponent implements OnInit {
   constructor(
     private navService: NavigationService,
     public searchService: SearchService,
-    private auth: AuthService
+    private auth: AuthenticationService,
+    private sessionStorageService: SessionStorageService,
+    private userService: UserService,
+    private sanitizer: DomSanitizer
   ) {
     this.notifications = [
       {
@@ -63,15 +72,26 @@ export class HeaderSidebarCompactComponent implements OnInit {
     ];
   }
 
-  ngOnInit() {}
+  imageSrc: any;
+  user$: Observable<UserResponse | null>;
+  ngOnInit() {
+    this.user$ = this.sessionStorageService.getUser();
+    this.user$.subscribe(user => {
+      if (user && user.email) {
+        this.userService.getProfileImageBlobUrl(user.email).subscribe((blob: Blob) => {
+          const objectURL = URL.createObjectURL(blob);
+          this.imageSrc = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+        });
+      }
+    });
+  }
 
   toggelSidebar() {
     const state = this.navService.sidebarState;
     state.sidenavOpen = !state.sidenavOpen;
     state.childnavOpen = !state.childnavOpen;
   }
-
   signout() {
-    this.auth.signout();
+    this.auth.logoutImpl();
   }
 }

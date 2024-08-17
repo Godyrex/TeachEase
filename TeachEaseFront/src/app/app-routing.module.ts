@@ -48,6 +48,10 @@ const adminRoutes: Routes = [
       loadChildren: () => import('./views/pages/pages.module').then(m => m.PagesModule)
     },
     {
+        path: 'settings',
+        loadChildren: () => import('./views/settings/settings.module').then(m => m.SettingsModule)
+    },
+    {
         path: 'icons',
         loadChildren: () => import('./views/icons/icons.module').then(m => m.IconsModule)
     }
