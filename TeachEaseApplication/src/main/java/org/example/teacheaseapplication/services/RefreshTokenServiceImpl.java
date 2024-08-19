@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.NoSuchElementException;
 
 @Service
 @Slf4j
@@ -38,7 +39,7 @@ public class RefreshTokenServiceImpl implements IRefreshTokenService {
     @Override
     public RefreshToken createRefreshToken(String email, long expiration) {
         RefreshToken refreshToken = RefreshToken.builder()
-                .user(userRepository.findByEmail(email))
+                .user(userRepository.findByEmail(email).orElseThrow(() -> new NoSuchElementException("User not found")))
                 .token(java.util.UUID.randomUUID().toString())
                 .expiryDate(Instant.now().plusMillis(expiration))
                 .build();

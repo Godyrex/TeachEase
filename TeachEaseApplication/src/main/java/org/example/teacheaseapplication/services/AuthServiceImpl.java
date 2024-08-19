@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.time.Instant;
+import java.util.NoSuchElementException;
 
 @Service
 @Slf4j
@@ -66,8 +67,7 @@ public class AuthServiceImpl implements IAuthService {
     @Override
     public ResponseEntity<HttpStatus> logout(String email, HttpServletRequest request, HttpServletResponse response) {
         log.info("Logging out user");
-        User user = userRepository.findByEmail(email);
-        if(user != null){
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND + email));
             iRefreshTokenService.deleteUserTokens(user);
             log.info("User found");
             new SecurityContextLogoutHandler().logout(request, response, null);
@@ -77,9 +77,6 @@ public class AuthServiceImpl implements IAuthService {
             log.info("Logout :Refresh Token removed");
             log.info("User logged out");
             return ResponseEntity.ok().build();
-        }else{
-            throw new UsernameNotFoundException(USER_NOT_FOUND + email);
-        }
     }
 
     @Override
@@ -185,7 +182,7 @@ public class AuthServiceImpl implements IAuthService {
                     codeVerificationService.generateCode(),
                     Instant.now().plusSeconds(3600*24)
             );
-            mailService.sendConfirmationEmail(userRepository.findByEmail(email),codeVerification);
+            mailService.sendConfirmationEmail(userRepository.findByEmail(email).orElseThrow(()-> new NoSuchElementException("User not found")),codeVerification);
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -200,7 +197,7 @@ public class AuthServiceImpl implements IAuthService {
                     codeVerificationService.generateCode(),
                     Instant.now().plusSeconds(3600)
             );
-            mailService.sendPasswordResetEmail(userRepository.findByEmail(email),codeVerification);
+            mailService.sendPasswordResetEmail(userRepository.findByEmail(email).orElseThrow(()-> new NoSuchElementException("User not found")),codeVerification);
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -213,7 +210,7 @@ public class AuthServiceImpl implements IAuthService {
         CodeVerification codeVerification = codeVerificationService.verifyCode(code);
         if(codeVerification.getEmail()!= null){
             log.info("Email verified");
-            User user = userRepository.findByEmail(codeVerification.getEmail());
+            User user = userRepository.findByEmail(codeVerification.getEmail()).orElseThrow(()-> new NoSuchElementException("User not found"));
             user.setVerified(true);
             userRepository.save(user);
             codeVerificationService.deleteCode(codeVerification.getEmail(),CodeType.EMAIL_VERIFICATION);
@@ -227,7 +224,7 @@ public class AuthServiceImpl implements IAuthService {
     public ResponseEntity<UserResponse> checkAuth(Principal principal) {
         log.info("Checking user authentication");
         if(isUserAuthenticated()){
-            User user = userRepository.findByEmail(principal.getName());
+            User user = userRepository.findByEmail(principal.getName()).orElseThrow(()-> new NoSuchElementException("User not found"));
 
             log.info("User authenticated successfully");
             return ResponseEntity.ok(UserResponse.builder()

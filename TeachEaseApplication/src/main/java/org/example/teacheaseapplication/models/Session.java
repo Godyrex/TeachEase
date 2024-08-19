@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 @Document(collection = "sessions")
 @Builder
-public class ClassSession {
+public class Session {
     @Id
     private String id;
     private String title;

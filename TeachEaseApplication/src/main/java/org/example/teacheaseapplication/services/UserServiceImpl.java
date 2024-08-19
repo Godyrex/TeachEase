@@ -40,17 +40,17 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
     }
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userRepository.findByEmail(email);
+        return userRepository.findByEmail(email).orElseThrow(()-> new NoSuchElementException("User not found"));
     }
 
     @Override
     public UserDetails loadUserByEmail(String email) {
-        return userRepository.findByEmail(email);
+        return userRepository.findByEmail(email).orElseThrow(()-> new NoSuchElementException("User not found"));
     }
 
     @Override
     public boolean ValidUser(String email) {
-        User user = userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new NoSuchElementException("User not found"));
         return
                 user != null
                 && user.isAccountNonLocked()
@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
     public ResponseEntity<HttpStatus> updateUserProfile(ProfileInformationRequest profileInformationRequest, Principal principal) {
         log.info("Updating profile for user: " + principal.getName());
         log.info("Profile information: " + profileInformationRequest.toString());
-        User user = userRepository.findByEmail(principal.getName());
+        User user = userRepository.findByEmail(principal.getName()).orElseThrow(()-> new NoSuchElementException("User not found"));
         String name = profileInformationRequest.getName().toLowerCase();
         String lastName = profileInformationRequest.getLastname().toLowerCase();
 
@@ -103,7 +103,7 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
             //file.transferTo(new File(filePath));
 
             // Get the user
-            User user = userRepository.findByEmail(principal.getName());
+            User user = userRepository.findByEmail(principal.getName()).orElseThrow(()-> new NoSuchElementException("User not found"));
             //delete old image
             if(user.getImage()!= null)
             {
@@ -129,7 +129,7 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
     public ResponseEntity<byte[]> getProfileImage(Principal principal, String email) {
         try {
             // Get the user
-            User user = userRepository.findByEmail(email);
+            User user = userRepository.findByEmail(email).orElseThrow(()-> new NoSuchElementException("User not found"));
             if(user.getImage() == null){
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
@@ -145,7 +145,7 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
 
     @Override
     public ResponseEntity<UserResponse> getUserProfile(String email) {
-        User user = userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new NoSuchElementException("User not found"));
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -161,7 +161,7 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
     public ResponseEntity<HttpStatus> updatePassword(UpdatePasswordRequest updatePasswordRequest, Principal principal) {
         log.info("Updating password for user: " + principal.getName());
         log.info("Password information: " + updatePasswordRequest.toString());
-        User user = userRepository.findByEmail(principal.getName());
+        User user = userRepository.findByEmail(principal.getName()).orElseThrow(()-> new NoSuchElementException("User not found"));
         if (!encoder.matches(updatePasswordRequest.getPassword(), user.getPassword())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -176,7 +176,7 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
         if (codeVerification.getEmail()==null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        User user = userRepository.findByEmail(codeVerification.getEmail());
+        User user = userRepository.findByEmail(codeVerification.getEmail()).orElseThrow(()-> new NoSuchElementException("User not found"));
         user.setPassword(encoder.encode(updatePasswordRequest.getNewPassword()));
         codeVerificationService.deleteCode(codeVerification.getEmail(), CodeType.PASSWORD_RESET);
         userRepository.save(user);
@@ -186,7 +186,7 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
 
     @Override
     public ResponseEntity<UserResponse> getUserProfileByEmail(Principal principal, String email) {
-        User user = userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new NoSuchElementException("User not found"));
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }

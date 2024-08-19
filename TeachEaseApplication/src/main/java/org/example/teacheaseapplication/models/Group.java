@@ -17,6 +17,6 @@ public class Group {
     private String teacher;
     private List<String> students;
     private List<String> posts;
-    private List<String> classSessions;
+    private List<String> sessions;
     private List<String> payments;
 }
