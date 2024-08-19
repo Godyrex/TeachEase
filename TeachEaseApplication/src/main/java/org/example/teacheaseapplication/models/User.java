@@ -30,6 +30,9 @@ public class User implements UserDetails {
     @NotNull
     private String lastname;
     private String image;
+    private List<String> groups;
+    private List<String> presences;
+    private List<String> payments;
     private Role role;
     @NotNull
     private Boolean verified;
