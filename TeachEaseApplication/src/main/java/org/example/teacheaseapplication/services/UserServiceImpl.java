@@ -4,12 +4,18 @@ package org.example.teacheaseapplication.services;
 import lombok.extern.slf4j.Slf4j;
 import org.example.teacheaseapplication.dto.requests.ProfileInformationRequest;
 import org.example.teacheaseapplication.dto.requests.UpdatePasswordRequest;
+import org.example.teacheaseapplication.dto.responses.PaginatedUsersResponse;
 import org.example.teacheaseapplication.dto.responses.UserResponse;
 import org.example.teacheaseapplication.models.CodeType;
 import org.example.teacheaseapplication.models.CodeVerification;
+import org.example.teacheaseapplication.models.Role;
 import org.example.teacheaseapplication.models.User;
 import org.example.teacheaseapplication.repositories.UserRepository;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,8 +29,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.security.Principal;
-
-import java.util.*;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -33,10 +41,12 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
     private final UserRepository userRepository;
     private final CodeVerificationService codeVerificationService;
     private final PasswordEncoder encoder;
-    public UserServiceImpl(UserRepository userRepository, CodeVerificationService codeVerificationService, @Lazy PasswordEncoder encoder) {
+    private final MongoTemplate mongoTemplate;
+    public UserServiceImpl(UserRepository userRepository, CodeVerificationService codeVerificationService, @Lazy PasswordEncoder encoder, MongoTemplate mongoTemplate) {
         this.userRepository = userRepository;
         this.codeVerificationService = codeVerificationService;
         this.encoder = encoder;
+        this.mongoTemplate = mongoTemplate;
     }
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -196,6 +206,57 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
                 .lastname(user.getLastname())
                 .image(user.getImage())
                 .build());
+    }
+
+    @Override
+    public ResponseEntity<HttpStatus> setRole(String email, String role) {
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new NoSuchElementException("User not found"));
+        user.setRole(Role.valueOf(role));
+        userRepository.save(user);
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public ResponseEntity<PaginatedUsersResponse> getUsers(int page, int size, String keyword) {
+        log.info("Getting users for page: " + page + ", size: " + size + ", keyword: " + keyword);
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Query query = new Query().with(pageRequest);
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            Criteria criteria = new Criteria().orOperator(
+                    Criteria.where("email").regex(keyword, "i"),
+                    Criteria.where("lastname").regex(keyword, "i"),
+                    Criteria.where("name").regex(keyword, "i"),
+                    Criteria.where("ban").regex(keyword, "i"),
+                    Criteria.where("verified").regex(keyword, "i"),
+                    Criteria.where("role").regex(keyword, "i")
+
+            );
+            query.addCriteria(criteria);
+        }
+        List<User> users = mongoTemplate.find(query, User.class);
+        long total = mongoTemplate.count(Query.of(query).limit(-1).skip(-1), User.class);
+        List<UserResponse> userResponses = users.stream()
+                .map(
+                        user -> UserResponse.builder()
+                                .email(user.getEmail())
+                                .name(user.getName())
+                                .lastname(user.getLastname())
+                                .ban(user.getBan())
+                                .verified(user.getVerified())
+                                .role(user.getRole().name())
+                                .build()
+                )
+                .collect(Collectors.toList());
+
+        PaginatedUsersResponse response = new PaginatedUsersResponse();
+        response.setUsers(userResponses);
+        response.setCurrentPage(page);
+        response.setTotalPages((int) Math.ceil((double) total / size));
+        response.setTotalItems(total);
+        response.setItemsPerPage(size);
+        log.info("Users: " + response);
+        return ResponseEntity.ok(response);
     }
 
 

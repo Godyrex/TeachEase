@@ -4,8 +4,8 @@ import {ProfileInformationRequest} from '../../models/user/requests/ProfileInfor
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {UpdatePasswordRequest} from '../../models/user/requests/UpdatePasswordRequest';
-import {SessionStorageService} from './session-storage.service';
 import {UserResponse} from "../../models/user/UserResponse";
+import {PaginatedUsersResponse} from "../../models/user/PaginatedUsersResponse";
 
 @Injectable({
   providedIn: 'root'
@@ -56,5 +56,11 @@ export class UserService {
   }
   getUserProfileByEmail(email: string): Observable<UserResponse> {
     return this.http.get<UserResponse>(`${this.baseUrl}/profile/${email}`);
+  }
+  setUserRole(email: string,role: string) {
+    return this.http.put(`${this.baseUrl}/set-role/${email}`, null, {params: {role}});
+  }
+  getUsers(page: number,size: number, keyword: string): Observable<PaginatedUsersResponse> {
+    return this.http.get<PaginatedUsersResponse>(`${this.baseUrl}/users`, {params: {page, size, keyword}});
   }
 }

@@ -48,6 +48,14 @@ const adminRoutes: Routes = [
       loadChildren: () => import('./views/pages/pages.module').then(m => m.PagesModule)
     },
     {
+        path: 'group',
+        loadChildren: () => import('./views/group/group.module').then(m => m.GroupModule)
+    },
+    {
+        path: 'tools',
+        loadChildren: () => import('./views/tools/tools.module').then(m => m.ToolsModule)
+    },
+    {
         path: 'settings',
         loadChildren: () => import('./views/settings/settings.module').then(m => m.SettingsModule)
     },

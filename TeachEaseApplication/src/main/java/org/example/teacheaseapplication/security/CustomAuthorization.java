@@ -2,7 +2,6 @@ package org.example.teacheaseapplication.security;
 
 import lombok.AllArgsConstructor;
 import org.example.teacheaseapplication.models.Session;
-import org.example.teacheaseapplication.repositories.GroupRepository;
 import org.example.teacheaseapplication.repositories.SessionRepository;
 import org.example.teacheaseapplication.repositories.UserRepository;
 import org.springframework.stereotype.Service;

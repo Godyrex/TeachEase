@@ -164,6 +164,23 @@ export class NavigationService {
                 ]
             },
             {
+                name: 'Groups',
+                description: 'Your groups and group management.',
+                type: 'dropDown',
+                icon: 'i-Administrator',
+                sub: [
+                ]
+            },
+            {
+                name: 'Tools',
+                description: 'Tools for managing resources.',
+                type: 'dropDown',
+                icon: 'i-Administrator',
+                sub: [
+                    { icon: 'i-Add-User', name: 'Users', state: '/tools/users', type: 'link' },
+                ]
+            },
+            {
                 name: 'Pages',
                 description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.',
                 type: 'dropDown',
@@ -172,29 +189,6 @@ export class NavigationService {
                     { icon: 'i-Male', name: 'User Profile', state: '/pages/profile', type: 'link' }
                 ]
             },
-            {
-                name: 'Icons',
-                description: '600+ premium icons',
-                type: 'link',
-                icon: 'i-Cloud-Sun',
-                state: '/icons/iconsmind'
-            },
-            {
-                name: 'Others',
-                description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.',
-                type: 'dropDown',
-                icon: 'i-Double-Tap',
-                sub: [
-                    { icon: 'i-Error-404-Window', name: 'Not found', state: '/others/404', type: 'link' }
-                ]
-            },
-            {
-                name: 'Doc',
-                type: 'extLink',
-                tooltip: 'Documentation',
-                icon: 'i-Safe-Box1',
-                state: 'http://demos.ui-lib.com/gull-doc'
-            }
         ];
     }
     filterMenuItemsByUser(menuItems: IMenuItem[], user: UserResponse): IMenuItem[] {

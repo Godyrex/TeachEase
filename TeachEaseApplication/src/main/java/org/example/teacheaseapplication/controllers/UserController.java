@@ -3,6 +3,7 @@ package org.example.teacheaseapplication.controllers;
 import lombok.AllArgsConstructor;
 import org.example.teacheaseapplication.dto.requests.ProfileInformationRequest;
 import org.example.teacheaseapplication.dto.requests.UpdatePasswordRequest;
+import org.example.teacheaseapplication.dto.responses.PaginatedUsersResponse;
 import org.example.teacheaseapplication.dto.responses.UserResponse;
 import org.example.teacheaseapplication.services.IUserService;
 import org.springframework.http.HttpStatus;
@@ -49,6 +50,20 @@ public class UserController {
     @PreAuthorize("permitAll")
     public ResponseEntity<HttpStatus> resetPassword(@RequestBody UpdatePasswordRequest updatePasswordRequest, @RequestParam String code) {
         return userService.resetPassword(updatePasswordRequest, code);
+    }
+    @PutMapping("/set-role/{email}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<HttpStatus> setRole(@PathVariable String email, @RequestParam String role) {
+        return userService.setRole(email, role);
+    }
+    @GetMapping("/users")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<PaginatedUsersResponse> getUsersPaginated(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "keyword", required = false) String keyword)
+    {
+        return userService.getUsers(page, size,keyword);
     }
 
 }

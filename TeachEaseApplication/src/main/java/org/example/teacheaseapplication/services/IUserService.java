@@ -3,6 +3,7 @@ package org.example.teacheaseapplication.services;
 
 import org.example.teacheaseapplication.dto.requests.ProfileInformationRequest;
 import org.example.teacheaseapplication.dto.requests.UpdatePasswordRequest;
+import org.example.teacheaseapplication.dto.responses.PaginatedUsersResponse;
 import org.example.teacheaseapplication.dto.responses.UserResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,4 +30,6 @@ UserDetails loadUserByEmail(String email);
     ResponseEntity<HttpStatus> updatePassword(UpdatePasswordRequest updatePasswordRequest, Principal principal);
     ResponseEntity<HttpStatus> resetPassword(UpdatePasswordRequest updatePasswordRequest, String code);
     ResponseEntity<UserResponse> getUserProfileByEmail(Principal principal,String email);
+    ResponseEntity<HttpStatus> setRole(String email, String role);
+    ResponseEntity<PaginatedUsersResponse> getUsers(int page, int size, String keyword);
 }

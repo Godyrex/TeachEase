@@ -9,7 +9,6 @@ import org.example.teacheaseapplication.dto.responses.UserResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-
 import java.security.Principal;
 
 public interface IAuthService {

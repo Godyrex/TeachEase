@@ -9,6 +9,7 @@ import org.example.teacheaseapplication.dto.requests.SignupRequest;
 import org.example.teacheaseapplication.dto.responses.UserResponse;
 import org.example.teacheaseapplication.models.CodeType;
 import org.example.teacheaseapplication.models.CodeVerification;
+import org.example.teacheaseapplication.models.Role;
 import org.example.teacheaseapplication.models.User;
 import org.example.teacheaseapplication.repositories.UserRepository;
 import org.example.teacheaseapplication.security.jwt.JWTUtils;
@@ -165,6 +166,7 @@ public class AuthServiceImpl implements IAuthService {
                 .lastname(signupRequest.getLastname())
                 .verified(true)
                 .ban(false)
+                .role(Role.STUDENT)
                 .build();
         userRepository.save(user);
         mailService.sendAccountCreatedEmail(user);

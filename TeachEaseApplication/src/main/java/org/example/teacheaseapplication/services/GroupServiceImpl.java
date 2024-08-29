@@ -30,7 +30,7 @@ public class GroupServiceImpl implements IGroupService{
                 .teacher(group.getTeacher())
                 .students(group.getStudents())
                 .posts(group.getPosts())
-                .classSessions(group.getSessions())
+                .sessions(group.getSessions())
                 .build(), HttpStatus.OK);
 
     }
