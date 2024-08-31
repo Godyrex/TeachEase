@@ -1,13 +1,14 @@
 import { Component, OnInit } from "@angular/core";
 import { NavigationService } from "src/app/shared/services/navigation.service";
 import { SearchService } from "src/app/shared/services/search.service";
-import { AuthService } from "src/app/shared/services/auth.service";
 import {UserResponse} from "../../../../models/user/UserResponse";
 import {Observable} from "rxjs";
 import {SessionStorageService} from "../../../../services/user/session-storage.service";
 import {UserService} from "../../../../services/user/user.service";
 import {DomSanitizer} from "@angular/platform-browser";
 import {AuthenticationService} from "../../../../services/user/authentication.service";
+import {AddGroupFormComponent} from "../../../../../views/group/add-group-form/add-group-form.component";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: "app-header-sidebar-compact",
@@ -23,7 +24,8 @@ export class HeaderSidebarCompactComponent implements OnInit {
     private auth: AuthenticationService,
     private sessionStorageService: SessionStorageService,
     private userService: UserService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private dialog: NgbModal
   ) {
     this.notifications = [
       {
@@ -87,7 +89,13 @@ export class HeaderSidebarCompactComponent implements OnInit {
       }
     });
   }
-
+  openAddGroupForm() {
+    const dialogRef = this.dialog.open(AddGroupFormComponent);
+    dialogRef.result.then(() => {
+      dialogRef.close();
+        console.log("Dialog closed");
+    });
+  }
   toggelSidebar() {
     const state = this.navService.sidebarState;
     state.sidenavOpen = !state.sidenavOpen;

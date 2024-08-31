@@ -71,7 +71,7 @@
                 <i ngbDropdownToggle class="i-Student-Hat-2 text-muted header-icon" role="button"></i>
                 <div ngbDropdownMenu class="menu-icon-grid-dropdown">
                     <div class="menu-icon-grid">
-                        <a *ngIf="user.role === 'TEACHER' " href="#"><i class="i-Add"></i> Add Group</a>
+                        <a *ngIf="user.role === 'TEACHER'" (click)="openAddGroupForm()"><i class="i-Add"></i> Add Group</a>
                         <a href="#"><i class="i-Library"></i> UI Kits</a>
                         <a href="#"><i class="i-Drop"></i> Apps</a>
                         <a href="#"><i class="i-File-Clipboard-File--Text"></i> Forms</a>

@@ -53,8 +53,8 @@ public class GroupController {
 
     @PutMapping("/{groupId}/add-student")
     @PreAuthorize("hasRole('TEACHER')&&@customAuthorization.hasPermissionToGroup(principal, #groupId)")
-    public ResponseEntity<HttpStatus> addStudentToGroup(@PathVariable String groupId, @RequestBody String studentEmail) {
-        return groupService.addStudentToGroup(groupId, studentEmail);
+    public ResponseEntity<HttpStatus> addStudentToGroup(@PathVariable String groupId, @RequestBody List<String> studentsEmails) {
+        return groupService.addStudentToGroup(groupId, studentsEmails);
     }
 
     @PutMapping("/{groupId}/remove-student")

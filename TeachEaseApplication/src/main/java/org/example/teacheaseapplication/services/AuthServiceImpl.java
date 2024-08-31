@@ -125,7 +125,6 @@ public class AuthServiceImpl implements IAuthService {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             User userDetails = (User) authentication.getPrincipal();
             setHeaders(response,userDetails,loginRequest.isRememberMe());
-            userRepository.save(userDetails);
 
             log.info("User authenticated successfully");
             return ResponseEntity.ok(UserResponse.builder()
@@ -171,6 +170,9 @@ public class AuthServiceImpl implements IAuthService {
                 .verified(true)
                 .ban(false)
                 .role(Role.STUDENT)
+                .groups(new ArrayList<>())
+                .payments(new ArrayList<>())
+                .presences(new ArrayList<>())
                 .build();
         userRepository.save(user);
         mailService.sendAccountCreatedEmail(user);
@@ -254,6 +256,9 @@ public class AuthServiceImpl implements IAuthService {
                 .verified(true)
                 .ban(false)
                 .role(Role.STUDENT)
+                .groups(new ArrayList<>())
+                .payments(new ArrayList<>())
+                .presences(new ArrayList<>())
                 .build();
         userRepository.save(user);
         mailService.sendAccountCreatedForYouMail(user,password);

@@ -14,6 +14,6 @@ public interface IGroupService {
     ResponseEntity<HttpStatus> createGroup(GroupRequest groupRequest , Principal principal);
     ResponseEntity<HttpStatus> deleteGroup(String groupId);
     ResponseEntity<HttpStatus> updateGroupName(String groupId, String name);
-    ResponseEntity<HttpStatus> addStudentToGroup(String groupId, String studentEmail);
+    ResponseEntity<HttpStatus> addStudentToGroup(String groupId, List<String> studentsEmails);
     ResponseEntity<HttpStatus> removeStudentFromGroup(String groupId, String studentEmail);
 }

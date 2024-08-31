@@ -1,0 +1,22 @@
+.email-bubbles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.email-bubble {
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.email-bubble input {
+  flex-grow: 1;
+  margin-right: 10px;
+}
+
+.email-bubble button {
+  margin-left: 10px;
+}

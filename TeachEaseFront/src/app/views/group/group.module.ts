@@ -3,34 +3,26 @@ import { CommonModule } from '@angular/common';
 
 import { GroupRoutingModule } from './group-routing.module';
 import { GroupComponent } from './group/group.component';
-import {FormsModule} from "@angular/forms";
-import {MatListModule} from "@angular/material/list";
-import {MatLineModule} from "@angular/material/core";
-import {MatCardModule} from "@angular/material/card";
-import {MatButtonModule} from "@angular/material/button";
-import {MatTabsModule} from "@angular/material/tabs";
-import {MatIconModule} from "@angular/material/icon";
-import {MatInputModule} from "@angular/material/input";
-import {MatTableModule} from "@angular/material/table";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import { AddGroupFormComponent } from './add-group-form/add-group-form.component';
+import {MatDialogModule} from "@angular/material/dialog";
+import {TagInputModule} from "ngx-chips";
+import {CustomFormsModule} from "ngx-custom-validators";
+import {SharedComponentsModule} from "../../shared/components/shared-components.module";
 
 
 @NgModule({
   declarations: [
-    GroupComponent
+    GroupComponent,
+    AddGroupFormComponent,
   ],
-  imports: [
-    CommonModule,
-    GroupRoutingModule,
-    FormsModule,
-    MatTabsModule,
-    MatListModule,
-    MatButtonModule,
-    MatIconModule,
-    MatInputModule,
-    MatCardModule,
-    MatTableModule,
-    MatListModule,
-    MatLineModule,
-  ]
+    imports: [
+        CommonModule,
+        GroupRoutingModule,
+        FormsModule,
+        ReactiveFormsModule,
+        TagInputModule,
+        SharedComponentsModule,
+    ]
 })
 export class GroupModule { }

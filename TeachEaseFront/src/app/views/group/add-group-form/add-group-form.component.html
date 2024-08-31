@@ -1,0 +1,30 @@
+<h1 class="modal-title text-center my-3">Add Group</h1>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="modal-body">
+        <div class="form-group mb-3">
+            <label for="groupName" class="form-label">Group Name</label>
+            <input type="text" class="form-control" id="groupName" formControlName="groupName" aria-label="Group Name" aria-describedby="groupNameHelp">
+            <div class="invalid-feedback" *ngIf="form.get('groupName').hasError('required')">Group Name is required</div>
+        </div>
+        <div class="form-group mb-3">
+            <label for="studentsEmails" class="form-label">Students Emails</label>
+            <tag-input id="studentsEmails"
+                       formControlName="studentsEmails"
+                       (onSelect)="onSelect($event)"
+                       [modelAsStrings]="true"
+                       placeholder="Enter students emails"
+                       [addOnPaste]="true"
+                       [pasteSplitPattern]="' '"
+                       [validators]="[emailValidator]"
+                       [onlyFromAutocomplete]="false"
+            >
+            </tag-input>
+            <div class="invalid-feedback" *ngIf="form.get('studentsEmails').hasError('required')">Students Emails are required</div>
+        </div>
+        </div>
+        <div class="modal-footer">
+            <btn-loading type="submit" btnClass="btn-primary btn-rounded" loadingText="Saving..." [loading]="loading">Submit</btn-loading>
+        </div>
+    </form>
+

@@ -16,7 +16,12 @@ import { HeaderSidebarCompactComponent } from './admin-layout-sidebar-compact/he
 import { FooterComponent } from '../footer/footer.component';
 import { CustomizerComponent } from '../customizer/customizer.component';
 import { SharedDirectivesModule } from '../../directives/shared-directives.module';
-import { FormsModule } from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {MatButtonModule} from "@angular/material/button";
+import {MatDialogModule} from "@angular/material/dialog";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
+import {TagInputModule} from "ngx-chips";
 
 const components = [
     HeaderSidebarCompactComponent,
@@ -32,16 +37,22 @@ const components = [
 ];
 
 @NgModule({
-  imports: [
-    NgbModule,
-    RouterModule,
-    FormsModule,
-    SearchModule,
-    SharedPipesModule,
-    SharedDirectivesModule,
-    PerfectScrollbarModule,
-    CommonModule
-  ],
+    imports: [
+        NgbModule,
+        RouterModule,
+        FormsModule,
+        SearchModule,
+        SharedPipesModule,
+        SharedDirectivesModule,
+        PerfectScrollbarModule,
+        CommonModule,
+        MatButtonModule,
+        MatDialogModule,
+        MatFormFieldModule,
+        MatInputModule,
+        ReactiveFormsModule,
+        TagInputModule
+    ],
   declarations: components,
   exports: components
 })
