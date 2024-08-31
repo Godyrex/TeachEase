@@ -23,7 +23,7 @@ public class MailServiceImpl implements IMailService {
                 + "<a href='http://localhost:4200/sessions/verify-email?code=" + codeVerification.getCode() + "'>Verify Email</a>"
                 + "<p>If you did not make this request, you can ignore this email.</p>"
                 + "<p>Best,</p>"
-                + "<p>Courzelo</p>";
+                + "<p>TeachEase</p>";
         EmailRequest emailRequest = EmailRequest.builder()
                 .to(user.getEmail())
                 .subject("Email Verification")
@@ -40,7 +40,7 @@ public class MailServiceImpl implements IMailService {
                 + "<a href='http://localhost:4200/sessions/reset-password?code=" + codeVerification.getCode() + "'>Reset Password</a>"
                 + "<p>If you did not make this request, please ignore this email.</p>"
                 + "<p>Best regards,</p>"
-                + "<p>Courzelo Team</p>";
+                + "<p>TeachEase Team</p>";
 
             EmailRequest emailRequest = EmailRequest.builder()
                     .to(user.getEmail())
@@ -55,7 +55,24 @@ public class MailServiceImpl implements IMailService {
         String htmlMsg = "<h3>Hello, " + user.getEmail() + "</h3>"
                 + "<p>Your account has been created successfully. You can now login to your account.</p>"
                 + "<p>Best regards,</p>"
-                + "<p>Courzelo Team</p>";
+                + "<p>TeachEase Team</p>";
+
+        EmailRequest emailRequest = EmailRequest.builder()
+                .to(user.getEmail())
+                .subject("Account Created")
+                .text(htmlMsg)
+                .build();
+        rabbitTemplate.convertAndSend(RabbitProducerConfig.EXCHANGE, RabbitProducerConfig.ROUTING_KEY, emailRequest);
+    }
+
+    @Override
+    public void sendAccountCreatedForYouMail(User user, String password) {
+        String htmlMsg = "<h3>Hello, " + user.getEmail() + "</h3>"
+                + "<p>Your account has been created successfully. You can now login to your account using the following credentials:</p>"
+                + "<p>Email: " + user.getEmail() + "</p>"
+                + "<p>Password: " + password + "</p>"
+                + "<p>Best regards,</p>"
+                + "<p>TeachEase Team</p>";
 
         EmailRequest emailRequest = EmailRequest.builder()
                 .to(user.getEmail())

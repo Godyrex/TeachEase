@@ -28,9 +28,7 @@ public class User implements UserDetails {
     private String email;
     @NotNull
     private String password;
-    @NotNull
     private String name;
-    @NotNull
     private String lastname;
     private String image;
     private List<String> groups;

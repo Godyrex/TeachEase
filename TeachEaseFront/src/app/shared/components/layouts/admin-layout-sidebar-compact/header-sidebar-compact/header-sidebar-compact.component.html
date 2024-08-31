@@ -68,10 +68,10 @@
             <i class="i-Magnifi-Glass1 header-icon" role="button" (click)="searchService.searchOpen = true"></i>
             <i fullScreenWindow class="i-Full-Screen header-icon d-none d-sm-inline-block" role="button"></i>
             <div ngbDropdown [placement]="'bottom-right'" class="d-none d-sm-inline-block">
-                <i ngbDropdownToggle class="i-Gear text-muted header-icon" role="button"></i>
+                <i ngbDropdownToggle class="i-Student-Hat-2 text-muted header-icon" role="button"></i>
                 <div ngbDropdownMenu class="menu-icon-grid-dropdown">
                     <div class="menu-icon-grid">
-                        <a href="#"><i class="i-Shop-4"></i> Home</a>
+                        <a *ngIf="user.role === 'TEACHER' " href="#"><i class="i-Add"></i> Add Group</a>
                         <a href="#"><i class="i-Library"></i> UI Kits</a>
                         <a href="#"><i class="i-Drop"></i> Apps</a>
                         <a href="#"><i class="i-File-Clipboard-File--Text"></i> Forms</a>

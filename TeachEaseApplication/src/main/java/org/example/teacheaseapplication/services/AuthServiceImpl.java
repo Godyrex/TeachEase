@@ -32,7 +32,11 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.security.SecureRandom;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -241,5 +245,53 @@ public class AuthServiceImpl implements IAuthService {
         }
         log.info("User not authenticated");
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
+    public User createAccountWithEmail(String email){
+        String password = generatePassword();
+        User user = User.builder()
+                .email(email)
+                .password(encoder.encode(password))
+                .verified(true)
+                .ban(false)
+                .role(Role.STUDENT)
+                .build();
+        userRepository.save(user);
+        mailService.sendAccountCreatedForYouMail(user,password);
+        return user;
+    }
+    public String generatePassword() {
+        int length = 12; // Define the desired password length
+        SecureRandom random = new SecureRandom();
+
+        String upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String lowerCase = "abcdefghijklmnopqrstuvwxyz";
+        String digits = "0123456789";
+        String specialChars = "!@#$%^&*()-_+=<>?";
+
+        String allChars = upperCase + lowerCase + digits + specialChars;
+
+        List<Character> passwordChars = new ArrayList<>();
+
+        // Ensure the password includes at least one character from each set
+        passwordChars.add(upperCase.charAt(random.nextInt(upperCase.length())));
+        passwordChars.add(lowerCase.charAt(random.nextInt(lowerCase.length())));
+        passwordChars.add(digits.charAt(random.nextInt(digits.length())));
+        passwordChars.add(specialChars.charAt(random.nextInt(specialChars.length())));
+
+        // Fill the rest of the password length with random characters from the combined set
+        for (int i = 4; i < length; i++) {
+            passwordChars.add(allChars.charAt(random.nextInt(allChars.length())));
+        }
+
+        // Shuffle the characters to ensure randomness
+        Collections.shuffle(passwordChars, random);
+
+        // Convert the list of characters to a string
+        StringBuilder password = new StringBuilder();
+        for (char c : passwordChars) {
+            password.append(c);
+        }
+
+        return password.toString();
     }
 }

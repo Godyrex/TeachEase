@@ -20,6 +20,7 @@ import java.util.NoSuchElementException;
 public class GroupServiceImpl implements IGroupService{
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
+    private final AuthServiceImpl authService;
 
     @Override
     public ResponseEntity<GroupResponse> getGroup(String groupId) {
@@ -69,7 +70,12 @@ public class GroupServiceImpl implements IGroupService{
     {
         for(String student: students)
         {
-            User user = userRepository.findByEmail(student).orElseThrow(() -> new NoSuchElementException("User not found"));
+            User user;
+            try {
+                user = userRepository.findByEmail(student).orElseThrow(() -> new NoSuchElementException("User not found"));
+            } catch (NoSuchElementException e) {
+                user = authService.createAccountWithEmail(student);
+            }
             user.getGroups().add(group.getId());
             userRepository.save(user);
         }
