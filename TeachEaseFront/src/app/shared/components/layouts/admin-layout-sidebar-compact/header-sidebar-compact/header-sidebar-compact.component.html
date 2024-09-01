@@ -71,12 +71,13 @@
                 <i ngbDropdownToggle class="i-Student-Hat-2 text-muted header-icon" role="button"></i>
                 <div ngbDropdownMenu class="menu-icon-grid-dropdown">
                     <div class="menu-icon-grid">
-                        <a *ngIf="user.role === 'TEACHER'" (click)="openAddGroupForm()"><i class="i-Add"></i> Add Group</a>
-                        <a href="#"><i class="i-Library"></i> UI Kits</a>
-                        <a href="#"><i class="i-Drop"></i> Apps</a>
-                        <a href="#"><i class="i-File-Clipboard-File--Text"></i> Forms</a>
-                        <a href="#"><i class="i-Checked-User"></i> Sessions</a>
-                        <a href="#"><i class="i-Ambulance"></i> Support</a>
+                        <a *ngIf="user.role === 'TEACHER'" (click)="openAddGroupForm()" class="clickable"><i class="i-Add"></i> Add Group</a>
+                        <a *ngFor="let group of groups" [routerLink]="['/group/',group.id]" class="clickable">
+                            <i class="i-Book"></i> {{group.name}}
+                        </a>
+                        <a *ngIf="groups.length === 0">
+                            <i class="i-Book"></i> No Groups
+                        </a>
                     </div>
                 </div>
             </div>

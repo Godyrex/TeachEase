@@ -34,31 +34,31 @@ public class GroupController {
     }
 
     @GetMapping("/{groupId}")
-    @PreAuthorize("@customAuthorization.hasPermissionToGroup(principal, #groupId)")
+    @PreAuthorize("@customAuthorization.hasPermissionToGroup(#groupId)")
     public ResponseEntity<GroupResponse> getGroup(@PathVariable String groupId) {
         return groupService.getGroup(groupId);
     }
 
     @DeleteMapping("/{groupId}")
-    @PreAuthorize("hasRole('TEACHER')&&@customAuthorization.hasPermissionToGroup(principal, #groupId)")
+    @PreAuthorize("hasRole('TEACHER')&&@customAuthorization.hasPermissionToGroup(#groupId)")
     public ResponseEntity<HttpStatus> deleteGroup(@PathVariable String groupId) {
         return groupService.deleteGroup(groupId);
     }
 
     @PutMapping("/{groupId}")
-    @PreAuthorize("hasRole('TEACHER')&&@customAuthorization.hasPermissionToGroup(principal, #groupId)")
+    @PreAuthorize("hasRole('TEACHER')&&@customAuthorization.hasPermissionToGroup(#groupId)")
     public ResponseEntity<HttpStatus> updateGroupName(@PathVariable String groupId, @RequestBody String name) {
         return groupService.updateGroupName(groupId, name);
     }
 
     @PutMapping("/{groupId}/add-student")
-    @PreAuthorize("hasRole('TEACHER')&&@customAuthorization.hasPermissionToGroup(principal, #groupId)")
+    @PreAuthorize("hasRole('TEACHER')&&@customAuthorization.hasPermissionToGroup(#groupId)")
     public ResponseEntity<HttpStatus> addStudentToGroup(@PathVariable String groupId, @RequestBody List<String> studentsEmails) {
         return groupService.addStudentToGroup(groupId, studentsEmails);
     }
 
     @PutMapping("/{groupId}/remove-student")
-    @PreAuthorize("hasRole('TEACHER')&&@customAuthorization.hasPermissionToGroup(principal, #groupId)")
+    @PreAuthorize("hasRole('TEACHER')&&@customAuthorization.hasPermissionToGroup(#groupId)")
     public ResponseEntity<HttpStatus> removeStudentFromGroup(@PathVariable String groupId, @RequestBody String studentEmail) {
         return groupService.removeStudentFromGroup(groupId, studentEmail);
     }

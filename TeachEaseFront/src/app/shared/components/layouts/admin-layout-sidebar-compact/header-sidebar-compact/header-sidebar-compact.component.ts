@@ -9,6 +9,9 @@ import {DomSanitizer} from "@angular/platform-browser";
 import {AuthenticationService} from "../../../../services/user/authentication.service";
 import {AddGroupFormComponent} from "../../../../../views/group/add-group-form/add-group-form.component";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {GroupResponse} from "../../../../models/group/GroupResponse";
+import {GroupService} from "../../../../services/group/group.service";
+import {ToastrService} from "ngx-toastr";
 
 @Component({
   selector: "app-header-sidebar-compact",
@@ -24,8 +27,10 @@ export class HeaderSidebarCompactComponent implements OnInit {
     private auth: AuthenticationService,
     private sessionStorageService: SessionStorageService,
     private userService: UserService,
+    private groupService: GroupService,
     private sanitizer: DomSanitizer,
-    private dialog: NgbModal
+    private dialog: NgbModal,
+    private toastr: ToastrService
   ) {
     this.notifications = [
       {
@@ -76,6 +81,7 @@ export class HeaderSidebarCompactComponent implements OnInit {
 
   imageSrc: any;
   user$: Observable<UserResponse | null>;
+  groups: GroupResponse[] = [];
   user: UserResponse | null;
   ngOnInit() {
     this.user$ = this.sessionStorageService.getUser();
@@ -88,6 +94,16 @@ export class HeaderSidebarCompactComponent implements OnInit {
         });
       }
     });
+    this.getMyGroups();
+  }
+  getMyGroups() {
+    this.groupService.getGroups().subscribe((groups: GroupResponse[]) => {
+      this.groups = groups;
+    },error => {
+      console.log(error);
+        this.toastr.error(error.error);
+    }
+    );
   }
   openAddGroupForm() {
     const dialogRef = this.dialog.open(AddGroupFormComponent);

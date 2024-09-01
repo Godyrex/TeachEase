@@ -4,7 +4,7 @@
         <div class="modal-body">
         <div class="form-group mb-3">
             <label for="groupName" class="form-label">Group Name</label>
-            <input type="text" class="form-control" id="groupName" formControlName="groupName" aria-label="Group Name" aria-describedby="groupNameHelp">
+            <input placeholder="Enter group name" type="text" class="form-control" id="groupName" formControlName="groupName" aria-label="Group Name" aria-describedby="groupNameHelp">
             <div class="invalid-feedback" *ngIf="form.get('groupName').hasError('required')">Group Name is required</div>
         </div>
         <div class="form-group mb-3">
@@ -13,7 +13,9 @@
                        formControlName="studentsEmails"
                        (onSelect)="onSelect($event)"
                        [modelAsStrings]="true"
-                       placeholder="Enter students emails"
+                       secondaryPlaceholder="Enter students emails"
+                       placeholder="Add student email"
+                       [separatorKeyCodes]="[32]"
                        [addOnPaste]="true"
                        [pasteSplitPattern]="' '"
                        [validators]="[emailValidator]"

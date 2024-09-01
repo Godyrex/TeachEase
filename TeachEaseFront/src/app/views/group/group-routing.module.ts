@@ -5,7 +5,7 @@ import {GroupComponent} from "./group/group.component";
 
 const routes: Routes = [
   {
-    path: 'group',
+    path: ':id',
     component: GroupComponent
   },
 ];

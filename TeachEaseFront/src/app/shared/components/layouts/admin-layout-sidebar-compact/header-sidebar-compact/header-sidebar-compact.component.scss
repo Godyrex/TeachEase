@@ -1,0 +1,9 @@
+.clickable {
+  cursor: pointer;
+  text-decoration: none; /* Optional: remove underline to match style of other links */
+  color: inherit; /* Optional: inherit color to match other links */
+}
+
+.clickable:hover {
+  text-decoration: underline; /* Optional: mimic link hover style */
+}

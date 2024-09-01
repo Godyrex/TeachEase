@@ -28,6 +28,7 @@ public class GroupServiceImpl implements IGroupService{
 
     @Override
     public ResponseEntity<GroupResponse> getGroup(String groupId) {
+        log.info("Getting group {}", groupId);
         Group group = groupRepository.findById(groupId).orElseThrow(() -> new NoSuchElementException("Group not found"));
         return new ResponseEntity<>(GroupResponse.builder()
                 .id(group.getId())

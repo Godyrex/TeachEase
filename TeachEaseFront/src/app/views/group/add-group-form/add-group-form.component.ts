@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators} from "@angular/forms";
+import {AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators} from "@angular/forms";
 import {GroupService} from "../../../shared/services/group/group.service";
 import {ToastrService} from "ngx-toastr";
 import {GroupRequest} from "../../../shared/models/group/GroupRequest";
@@ -51,6 +51,7 @@ export class AddGroupFormComponent {
     console.log(this.groupRequest);
     this.groupService.createGroup(this.groupRequest).subscribe(
         () => {
+            this.form.reset();
             this.toastr.success('Group created successfully');
             this.loading = false;
         },error => {

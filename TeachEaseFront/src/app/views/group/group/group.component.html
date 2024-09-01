@@ -1,7 +1,12 @@
+<div *ngIf="!group" class="loadscreen">
+    <img src="assets/images/logo.png" class="logo mb-3" style="display: none" alt="">
+    <div class="loader-bubble loader-bubble-primary d-block"></div>
+</div>
+<div *ngIf="group">
 <div class="container-fluid bg-primary text-white p-4">
     <div class="row">
         <div class="col">
-            <h1 class="display-4">Course Name</h1>
+            <h1 class="display-4">{{group.name}}</h1>
             <p class="lead">Course Description: An introductory course about example subject.</p>
             <p>Credits: 3</p>
         </div>
@@ -97,4 +102,5 @@
             </div>
         </div>
     </div>
+</div>
 </div>
