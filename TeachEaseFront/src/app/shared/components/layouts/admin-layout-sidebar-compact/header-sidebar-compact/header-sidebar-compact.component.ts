@@ -96,6 +96,9 @@ export class HeaderSidebarCompactComponent implements OnInit {
     });
     this.getMyGroups();
   }
+  refresh() {
+    window.location.reload();
+  }
   getMyGroups() {
     this.groupService.getGroups().subscribe((groups: GroupResponse[]) => {
       this.groups = groups;

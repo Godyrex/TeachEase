@@ -2,13 +2,11 @@
     <img src="assets/images/logo.png" class="logo mb-3" style="display: none" alt="">
     <div class="loader-bubble loader-bubble-primary d-block"></div>
 </div>
-<div *ngIf="group">
+<div *ngIf="group && user">
 <div class="container-fluid bg-primary text-white p-4">
     <div class="row">
         <div class="col">
             <h1 class="display-4">{{group.name}}</h1>
-            <p class="lead">Course Description: An introductory course about example subject.</p>
-            <p>Credits: 3</p>
         </div>
     </div>
 </div>
@@ -16,10 +14,10 @@
 <!-- Buttons Section -->
 <div class="container mt-3">
     <div class="d-flex justify-content-end mb-3">
-        <button class="btn btn-success mr-2">Add Post</button>
-        <button class="btn btn-warning mr-2">Edit Course</button>
-        <button class="btn btn-danger mr-2">Delete Course</button>
-        <button class="btn btn-secondary">Leave Course</button>
+        <button *ngIf="isTeacherInGroup()" class="btn btn-success mr-2">Add Post</button>
+        <button *ngIf="isTeacherInGroup()" class="btn btn-warning mr-2">Edit Group</button>
+        <button *ngIf="isTeacherInGroup()" class="btn btn-danger mr-2" (click)="deleteGroupModal(modalConfirmGroup)">Delete Group</button>
+        <button *ngIf="user.role==='STUDENT'" class="btn btn-secondary" (click)="leaveGroupModal(modalConfirmLeaveGroup)">Leave Group</button>
     </div>
 </div>
 
@@ -103,4 +101,40 @@
         </div>
     </div>
 </div>
+    <ng-template #modalConfirmGroup let-modal>
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-title-GROUP">Delete Group</h4>
+            <button type="button" class="close" aria-label="Close button" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p><strong>Are you sure you want to delete  <span class="text-primary">{{ group.name }}</span>?</strong></p>
+            <p>All information associated with this group will be permanently deleted.
+                <span class="text-danger">This operation cannot be undone.</span>
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary btn-rounded" (click)="modal.dismiss('cancel')">Cancel</button>
+            <button type="button" ngbAutofocus class="btn btn-danger btn-rounded" (click)="modal.close('Ok')">Ok</button>
+        </div>
+    </ng-template>
+    <ng-template #modalConfirmLeaveGroup let-modal>
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-title-Leave-GROUP">Leave Group</h4>
+            <button type="button" class="close" aria-label="Close button" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p><strong>Are you sure you want to leave <span class="text-primary">{{ group.name }}</span>?</strong></p>
+            <p>You will no longer be a member of this group.
+                <span class="text-danger">This operation cannot be undone.</span>
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary btn-rounded" (click)="modal.dismiss('cancel')">Cancel</button>
+            <button type="button" ngbAutofocus class="btn btn-danger btn-rounded" (click)="modal.close('Ok')">Ok</button>
+        </div>
+    </ng-template>
 </div>

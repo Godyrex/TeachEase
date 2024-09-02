@@ -1,18 +1,14 @@
-package org.example.teacheaseapplication.models;
+package org.example.teacheaseapplication.dto.responses;
 
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-@Document(collection = "posts")
 @Builder
-public class Post {
-    @Id
+public class PostResponse {
     private String id;
     private String title;
     private String content;

@@ -8,6 +8,8 @@ import {UserService} from "../../../shared/services/user/user.service";
 import {DomSanitizer} from "@angular/platform-browser";
 import {GroupService} from "../../../shared/services/group/group.service";
 import {GroupResponse} from "../../../shared/models/group/GroupResponse";
+import {UserResponse} from "../../../shared/models/user/UserResponse";
+import {SessionStorageService} from "../../../shared/services/user/session-storage.service";
 
 @Component({
   selector: 'app-group',
@@ -18,25 +20,69 @@ export class GroupComponent implements OnInit{
   private routeSub: Subscription;
   id: string;
   group: GroupResponse;
+  user: UserResponse;
   constructor(
       private route: ActivatedRoute,
       private router: Router,
       private toastr: ToastrService,
       private modalService: NgbModal,
-      private formBuilder: FormBuilder,
-      private userService: UserService,
-      private sanitizer: DomSanitizer,
-      private groupService: GroupService
+      private groupService: GroupService,
+      private sessionStorageService: SessionStorageService
   ) { }
   ngOnInit(): void {
     this.routeSub = this.route.params.subscribe(params => {
       this.id = params['id'];
       this.fetchGroup();
     });
+    this.sessionStorageService.getUser().subscribe((user) => {
+      this.user = user;
+    })
+  }
+  isTeacherInGroup(){
+    return this.group.teacher == this.user.email;
   }
   fetchGroup() {
     this.groupService.getGroup(this.id).subscribe((group) => {
       this.group = group;
+    }, (error) => {
+        console.log(error);
+        this.toastr.error(error.error, 'Error');
+    }
+    );
+  }
+  deleteGroupModal(content: any) {
+    this.modalService.open(content, { ariaLabelledBy: 'delete groupe' })
+        .result.then((result) => {
+      if (result === 'Ok') {
+      this.deleteGroup();
+
+      }
+    }, (reason) => {
+      console.log('Err!', reason);
+    });
+  }
+  leaveGroupModal(content: any) {
+    this.modalService.open(content, { ariaLabelledBy: 'leave group' })
+        .result.then((result) => {
+      if (result === 'Ok') {
+      this.leaveGroup();
+      }
+    }, (reason) => {
+      console.log('Err!', reason);
+    });
+  }
+  leaveGroup(){
+    this.groupService.leaveGroup(this.id).subscribe((group) => {
+      this.router.navigate(['/']);
+    }, (error) => {
+        console.log(error);
+        this.toastr.error(error.error, 'Error');
+    }
+    );
+  }
+  deleteGroup(){
+    this.groupService.deleteGroup(this.id).subscribe((group) => {
+      this.router.navigate(['/']);
     }, (error) => {
         console.log(error);
         this.toastr.error(error.error, 'Error');

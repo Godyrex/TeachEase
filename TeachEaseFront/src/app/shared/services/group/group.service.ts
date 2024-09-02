@@ -27,6 +27,9 @@ export class GroupService {
   deleteGroup(groupId: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${groupId}`);
   }
+  leaveGroup(groupId: string): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${groupId}/leave`, null);
+  }
 
   updateGroupName(groupId: string, name: string): Observable<void> {
     return this.http.put<void>(`${this.apiUrl}/${groupId}`, { name });

@@ -2,6 +2,7 @@ package org.example.teacheaseapplication.controllers;
 
 import lombok.AllArgsConstructor;
 import org.example.teacheaseapplication.dto.requests.GroupRequest;
+import org.example.teacheaseapplication.dto.requests.PostRequest;
 import org.example.teacheaseapplication.dto.responses.GroupResponse;
 import org.example.teacheaseapplication.security.CustomAuthorization;
 import org.example.teacheaseapplication.services.IGroupService;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.util.List;
@@ -61,5 +63,23 @@ public class GroupController {
     @PreAuthorize("hasRole('TEACHER')&&@customAuthorization.hasPermissionToGroup(#groupId)")
     public ResponseEntity<HttpStatus> removeStudentFromGroup(@PathVariable String groupId, @RequestBody String studentEmail) {
         return groupService.removeStudentFromGroup(groupId, studentEmail);
+    }
+    @PutMapping("/{groupId}/leave")
+    @PreAuthorize("hasRole('STUDENT')&&@customAuthorization.hasPermissionToGroup(#groupId)")
+    public ResponseEntity<HttpStatus> leaveGroup(@PathVariable String groupId, Principal principal) {
+        return groupService.removeStudentFromGroup(groupId, principal.getName());
+    }
+    @PutMapping("/{groupId}/addPost")
+    @PreAuthorize("hasRole('TEACHER')&&@customAuthorization.hasPermissionToGroup(#groupId)")
+    public ResponseEntity<HttpStatus> addPost(
+            @PathVariable String groupId,
+            @RequestPart("title") String title,
+            @RequestPart("content") String content,
+            @RequestPart("files") MultipartFile[] files) {
+        PostRequest postRequest = PostRequest.builder()
+                .title(title)
+                .content(content)
+                .build();
+        return groupService.addPost(groupId, postRequest, files);
     }
 }

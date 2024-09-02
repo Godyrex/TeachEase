@@ -3,18 +3,25 @@ package org.example.teacheaseapplication.services;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.teacheaseapplication.dto.requests.GroupRequest;
+import org.example.teacheaseapplication.dto.requests.PostRequest;
 import org.example.teacheaseapplication.dto.responses.GroupResponse;
 import org.example.teacheaseapplication.models.Group;
+import org.example.teacheaseapplication.models.Post;
 import org.example.teacheaseapplication.models.Role;
 import org.example.teacheaseapplication.models.User;
 import org.example.teacheaseapplication.repositories.GroupRepository;
+import org.example.teacheaseapplication.repositories.PostRepository;
 import org.example.teacheaseapplication.repositories.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -25,6 +32,7 @@ public class GroupServiceImpl implements IGroupService{
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
     private final AuthServiceImpl authService;
+    private final PostRepository postRepository;
 
     @Override
     public ResponseEntity<GroupResponse> getGroup(String groupId) {
@@ -162,10 +170,35 @@ public class GroupServiceImpl implements IGroupService{
     public ResponseEntity<HttpStatus> removeStudentFromGroup(String groupId, String studentEmail) {
         Group group = groupRepository.findById(groupId).orElseThrow(() -> new NoSuchElementException("Group not found"));
         User user = userRepository.findByEmail(studentEmail).orElseThrow(() -> new NoSuchElementException("User not found"));
+        if(user.getRole().equals(Role.TEACHER)){
+            throw new IllegalArgumentException("Teacher cannot be a removed");
+        }
         group.getStudents().remove(user.getEmail());
         user.getGroups().remove(group.getId());
         groupRepository.save(group);
         userRepository.save(user);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<HttpStatus> addPost(String groupId, PostRequest postRequest, MultipartFile[] files) {
+        log.info("Adding post to course");
+        log.info("Course ID: " + groupId);
+        log.info("Files: " + Arrays.toString(files));
+        Group group = groupRepository.findById(groupId).orElseThrow(() -> new NoSuchElementException("Group not found"));
+        if(group.getPosts()==null){
+            group.setPosts(new ArrayList<>());
+        }
+        Post post = Post.builder()
+                .title(postRequest.getTitle())
+                .content(postRequest.getContent())
+                .createdAt(LocalDateTime.now())
+                .build();
+        //TODO save files
+        postRepository.save(post);
+        group.getPosts().add(post.getId());
+        log.info("Post added to group");
+        groupRepository.save(group);
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 }
