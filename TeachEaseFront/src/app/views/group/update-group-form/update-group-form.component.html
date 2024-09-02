@@ -1,17 +1,20 @@
-<h1 class="modal-title text-center my-3">Add Group</h1>
-
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <div class="modal-body">
+<div class="modal-header">
+    <h1 class="modal-title">Update Group</h1>
+    <button type="button" class="close" aria-label="Close button" aria-describedby="modal-title" (click)="onCancel()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="modal-body">
         <div class="form-group mb-3">
             <label for="groupName" class="form-label">Group Name</label>
-            <input [(ngModel)]="groupRequest.name" placeholder="Enter group name" type="text" class="form-control" id="groupName" formControlName="groupName" aria-label="Group Name" aria-describedby="groupNameHelp">
+            <input placeholder="Enter group name" type="text" class="form-control" id="groupName" formControlName="groupName" aria-label="Group Name" aria-describedby="groupNameHelp">
             <div class="invalid-feedback" *ngIf="form.get('groupName').hasError('required')">Group Name is required</div>
         </div>
         <div class="form-group mb-3">
             <label for="studentsEmails" class="form-label">Students Emails</label>
             <tag-input id="studentsEmails"
                        formControlName="studentsEmails"
-                       (onSelect)="onSelect($event)"
                        [modelAsStrings]="true"
                        secondaryPlaceholder="Enter students emails"
                        placeholder="Add student email"
@@ -24,9 +27,9 @@
             </tag-input>
             <div class="invalid-feedback" *ngIf="form.get('studentsEmails').hasError('required')">Students Emails are required</div>
         </div>
-        </div>
-        <div class="modal-footer">
-            <btn-loading type="submit" btnClass="btn-primary btn-rounded" loadingText="Saving..." [loading]="loading">Submit</btn-loading>
-        </div>
-    </form>
+    </div>
+    <div class="modal-footer">
+        <btn-loading type="submit" btnClass="btn-primary btn-rounded" loadingText="Saving..." [loading]="loading">Update</btn-loading>
+    </div>
+</form>
 

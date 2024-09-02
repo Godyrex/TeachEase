@@ -3,13 +3,11 @@ import {Subscription} from "rxjs";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ToastrService} from "ngx-toastr";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {FormBuilder} from "@angular/forms";
-import {UserService} from "../../../shared/services/user/user.service";
-import {DomSanitizer} from "@angular/platform-browser";
 import {GroupService} from "../../../shared/services/group/group.service";
 import {GroupResponse} from "../../../shared/models/group/GroupResponse";
 import {UserResponse} from "../../../shared/models/user/UserResponse";
 import {SessionStorageService} from "../../../shared/services/user/session-storage.service";
+import {UpdateGroupFormComponent} from "../update-group-form/update-group-form.component";
 
 @Component({
   selector: 'app-group',
@@ -27,7 +25,7 @@ export class GroupComponent implements OnInit{
       private toastr: ToastrService,
       private modalService: NgbModal,
       private groupService: GroupService,
-      private sessionStorageService: SessionStorageService
+      private sessionStorageService: SessionStorageService,
   ) { }
   ngOnInit(): void {
     this.routeSub = this.route.params.subscribe(params => {
@@ -38,6 +36,19 @@ export class GroupComponent implements OnInit{
       this.user = user;
     })
   }
+  openUpdateGroupForm() {
+    const dialogRef = this.modalService.open(UpdateGroupFormComponent, {
+    });
+    dialogRef.componentInstance.groupResponse = this.group;
+    dialogRef.result.then(
+        () => {
+          this.fetchGroup(); // Refresh the group data when the modal is closed
+        },
+        () => {
+          this.fetchGroup(); // Refresh the group data when the modal is dismissed
+        }
+    );
+  }
   isTeacherInGroup(){
     return this.group.teacher == this.user.email;
   }
@@ -45,8 +56,7 @@ export class GroupComponent implements OnInit{
     this.groupService.getGroup(this.id).subscribe((group) => {
       this.group = group;
     }, (error) => {
-        console.log(error);
-        this.toastr.error(error.error, 'Error');
+          this.router.navigate(['/']);
     }
     );
   }
@@ -55,7 +65,6 @@ export class GroupComponent implements OnInit{
         .result.then((result) => {
       if (result === 'Ok') {
       this.deleteGroup();
-
       }
     }, (reason) => {
       console.log('Err!', reason);

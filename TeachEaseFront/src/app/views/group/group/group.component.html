@@ -15,7 +15,7 @@
 <div class="container mt-3">
     <div class="d-flex justify-content-end mb-3">
         <button *ngIf="isTeacherInGroup()" class="btn btn-success mr-2">Add Post</button>
-        <button *ngIf="isTeacherInGroup()" class="btn btn-warning mr-2">Edit Group</button>
+        <button *ngIf="isTeacherInGroup()" class="btn btn-warning mr-2" (click)="openUpdateGroupForm()">Edit Group</button>
         <button *ngIf="isTeacherInGroup()" class="btn btn-danger mr-2" (click)="deleteGroupModal(modalConfirmGroup)">Delete Group</button>
         <button *ngIf="user.role==='STUDENT'" class="btn btn-secondary" (click)="leaveGroupModal(modalConfirmLeaveGroup)">Leave Group</button>
     </div>

@@ -110,7 +110,7 @@ public class GroupServiceImpl implements IGroupService{
             log.info("User {} added to group {}", student, group.getName());
             userRepository.save(user);
         }
-        log.info("Added {} students to group {}", group.getStudents().size(), group.getName());
+        log.info("{} Students in group {}", group.getStudents().size(), group.getName());
         groupRepository.save(group);
     }
     public void removeUsersFromGroup(List<String> students, Group group)
@@ -133,9 +133,24 @@ public class GroupServiceImpl implements IGroupService{
     }
 
     @Override
-    public ResponseEntity<HttpStatus> updateGroupName(String groupId, String name) {
+    public ResponseEntity<HttpStatus> updateGroup(String groupId, GroupRequest groupRequest) {
         Group group = groupRepository.findById(groupId).orElseThrow(() -> new NoSuchElementException("Group not found"));
-        group.setName(name.trim());
+        log.info("Request students {}", groupRequest.getStudents());
+        log.info("Group students {}", group.getStudents());
+        group.setName(groupRequest.getName().trim());
+        List<String> studentsToBeRemoved = new ArrayList<>();
+        for (String student : group.getStudents()) {
+            if (!groupRequest.getStudents().contains(student)) {
+                studentsToBeRemoved.add(student);
+                log.info("students loop {}", studentsToBeRemoved);
+            }
+        }
+        log.info("Students to be removed {}", studentsToBeRemoved);
+        removeUsersFromGroup(studentsToBeRemoved, group);
+        group.getStudents().removeAll(studentsToBeRemoved);
+        groupRequest.getStudents().removeAll(group.getStudents());
+        log.info("Students to be added {}", groupRequest.getStudents());
+        addStudentsToGroup(groupRequest.getStudents(), group);
         groupRepository.save(group);
         return new ResponseEntity<>(HttpStatus.OK);
     }

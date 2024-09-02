@@ -17,7 +17,6 @@ export interface IMenuItem {
     badges?: IBadge[];
     active?: boolean;
     roles?: string[];
-    mustBeInInstitutions?: boolean;
 }
 export interface IChildItem {
     id?: string;
@@ -29,7 +28,6 @@ export interface IChildItem {
     sub?: IChildItem[];
     active?: boolean;
     roles?: string[];
-    mustBeInInstitutions?: boolean;
 }
 
 interface IBadge {
@@ -164,21 +162,14 @@ export class NavigationService {
                 ]
             },
             {
-                name: 'Groups',
-                description: 'Your groups and group management.',
-                type: 'dropDown',
-                icon: 'i-Administrator',
-                sub: [
-                ]
-            },
-            {
                 name: 'Tools',
                 description: 'Tools for managing resources.',
                 type: 'dropDown',
                 icon: 'i-Administrator',
                 sub: [
                     { icon: 'i-Add-User', name: 'Users', state: '/tools/users', type: 'link' },
-                ]
+                ],
+                roles: ['ADMIN']
             },
             {
                 name: 'Pages',

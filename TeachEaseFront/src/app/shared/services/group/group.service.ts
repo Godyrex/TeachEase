@@ -31,8 +31,8 @@ export class GroupService {
     return this.http.put<void>(`${this.apiUrl}/${groupId}/leave`, null);
   }
 
-  updateGroupName(groupId: string, name: string): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/${groupId}`, { name });
+  updateGroup(groupId: string, groupRequest:GroupRequest): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${groupId}`, groupRequest);
   }
 
   addStudentToGroup(groupId: string, studentEmail: string): Observable<void> {

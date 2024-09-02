@@ -49,8 +49,8 @@ public class GroupController {
 
     @PutMapping("/{groupId}")
     @PreAuthorize("hasRole('TEACHER')&&@customAuthorization.hasPermissionToGroup(#groupId)")
-    public ResponseEntity<HttpStatus> updateGroupName(@PathVariable String groupId, @RequestBody String name) {
-        return groupService.updateGroupName(groupId, name);
+    public ResponseEntity<HttpStatus> updateGroup(@PathVariable String groupId, @RequestBody GroupRequest groupRequest) {
+        return groupService.updateGroup(groupId, groupRequest);
     }
 
     @PutMapping("/{groupId}/add-student")
