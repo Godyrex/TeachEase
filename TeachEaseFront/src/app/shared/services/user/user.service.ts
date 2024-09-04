@@ -63,4 +63,7 @@ export class UserService {
   getUsers(page: number,size: number, keyword: string): Observable<PaginatedUsersResponse> {
     return this.http.get<PaginatedUsersResponse>(`${this.baseUrl}/users`, {params: {page, size, keyword}});
   }
+  getUserNameAndLastname(email: string): Observable<{name: string, lastName: string}> {
+    return this.http.get<{name: string, lastName: string}>(`${this.baseUrl}/name-lastname`, {params: {email}});
+  }
 }

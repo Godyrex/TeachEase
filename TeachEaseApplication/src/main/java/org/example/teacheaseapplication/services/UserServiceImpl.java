@@ -4,6 +4,7 @@ package org.example.teacheaseapplication.services;
 import lombok.extern.slf4j.Slf4j;
 import org.example.teacheaseapplication.dto.requests.ProfileInformationRequest;
 import org.example.teacheaseapplication.dto.requests.UpdatePasswordRequest;
+import org.example.teacheaseapplication.dto.responses.NameLastnameResponse;
 import org.example.teacheaseapplication.dto.responses.PaginatedUsersResponse;
 import org.example.teacheaseapplication.dto.responses.UserResponse;
 import org.example.teacheaseapplication.models.CodeType;
@@ -257,6 +258,15 @@ public class UserServiceImpl implements UserDetailsService, IUserService {
         response.setItemsPerPage(size);
         log.info("Users: " + response);
         return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<NameLastnameResponse> getUserNameAndLastName(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new NoSuchElementException("User not found"));
+        return ResponseEntity.ok(NameLastnameResponse.builder()
+                .name(user.getName())
+                .lastname(user.getLastname())
+                .build());
     }
 
 

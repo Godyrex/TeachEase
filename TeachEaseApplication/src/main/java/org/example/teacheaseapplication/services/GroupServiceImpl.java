@@ -17,6 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.security.Principal;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -213,6 +216,54 @@ public class GroupServiceImpl implements IGroupService{
         postRepository.save(post);
         group.getPosts().add(post.getId());
         log.info("Post added to group");
+        groupRepository.save(group);
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<byte[]> downloadFile(String groupId, String fileName) {
+        log.info("Downloading file {}", fileName);
+        Group group = groupRepository.findById(groupId).orElseThrow();
+        if (group.getPosts() == null || group.getPosts().isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        List<Post> posts = postRepository.findAllById(group.getPosts());
+        if(posts.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        for (Post post : posts) {
+            for (String filePath : post.getFiles()) {
+                String normalizedFilePath = filePath.replace("\\", "/");
+                String extractedFileName = normalizedFilePath.substring(normalizedFilePath.lastIndexOf('/') + 1);
+                if (extractedFileName.equals(fileName)) {
+                    log.info("File found");
+                    try {
+                        return ResponseEntity.ok(Files.readAllBytes(new File(normalizedFilePath).toPath()));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @Override
+    public ResponseEntity<HttpStatus> deletePost(String groupId, String postID) {
+        Group group = groupRepository.findById(groupId).orElseThrow(() -> new NoSuchElementException("Group not found"));
+        Post post = postRepository.findById(postID).orElseThrow(() -> new NoSuchElementException("Post not found"));
+        //delete files
+        if (post.getFiles() != null) {
+            for (String filePath : post.getFiles()) {
+                try {
+                    Files.delete(new File(filePath).toPath());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        group.getPosts().remove(postID);
+        postRepository.deleteById(postID);
         groupRepository.save(group);
         return ResponseEntity.ok(HttpStatus.OK);
     }

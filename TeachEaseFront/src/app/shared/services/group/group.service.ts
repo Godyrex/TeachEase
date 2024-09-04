@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { GroupRequest } from '../../models/group/GroupRequest';
 import { GroupResponse } from '../../models/group/GroupResponse';
+import {PostRequest} from "../../models/group/PostRequest";
 
 @Injectable({
   providedIn: 'root'
@@ -34,12 +35,25 @@ export class GroupService {
   updateGroup(groupId: string, groupRequest:GroupRequest): Observable<void> {
     return this.http.put<void>(`${this.apiUrl}/${groupId}`, groupRequest);
   }
+  downloadFile(groupId: string, fileName: string): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/${groupId}/${fileName}/download`, { responseType: 'blob' });
+  }
+  addPost(groupId: string, coursePostRequest: PostRequest, files: File[]): Observable<void> {
+    const formData: FormData = new FormData();
+    // Append the coursePostRequest fields to the form data
+    formData.append('title', coursePostRequest.title);
+    formData.append('content', coursePostRequest.content);
+    // Append each file to the form data
+    for (let i = 0; i < files.length; i++) {
+      formData.append('files', files[i], files[i].name);
+    }
 
-  addStudentToGroup(groupId: string, studentEmail: string): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/${groupId}/add-student`, { studentEmail });
+    return this.http.put<void>(`${this.apiUrl}/${groupId}/addPost`, formData);
   }
 
-  removeStudentFromGroup(groupId: string, studentEmail: string): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/${groupId}/remove-student`, { studentEmail });
+
+  deletePost(groupId: string, postID: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${groupId}/deletePost`, { params: { postID } });
   }
+
 }

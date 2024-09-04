@@ -8,16 +8,27 @@
         <div class="col">
             <h1 class="display-4">{{group.name}}</h1>
         </div>
+        <div class="col">
+            <div class="row mt-5">
+                <div class="col-lg-8 user-profile mb-4">
+                    <div class="user-info">
+                        <img class="profile-picture avatar-lg mb-2" [src]="imageSrc || 'assets/default-image.jpg' " alt="">
+                        <h1 class="m-0 text-white">
+                            {{ displayTeacherInfo }}
+                        </h1>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <!-- Buttons Section -->
 <div class="container mt-3">
     <div class="d-flex justify-content-end mb-3">
-        <button *ngIf="isTeacherInGroup()" class="btn btn-success mr-2">Add Post</button>
-        <button *ngIf="isTeacherInGroup()" class="btn btn-warning mr-2" (click)="openUpdateGroupForm()">Edit Group</button>
-        <button *ngIf="isTeacherInGroup()" class="btn btn-danger mr-2" (click)="deleteGroupModal(modalConfirmGroup)">Delete Group</button>
-        <button *ngIf="user.role==='STUDENT'" class="btn btn-secondary" (click)="leaveGroupModal(modalConfirmLeaveGroup)">Leave Group</button>
+        <button *ngIf="isTeacherInGroup()" class="btn btn-success mr-2" (click)="addPostForm()"> <i class="i-Add"></i> Add Post</button>
+        <button *ngIf="isTeacherInGroup()" class="btn btn-warning mr-2" (click)="openUpdateGroupForm()"><i class="i-Pen-5"></i> Edit Group</button>
+        <button *ngIf="isTeacherInGroup()" class="btn btn-danger mr-2" (click)="deleteGroupModal(modalConfirmGroup)"><i class="i-Remove"></i> Delete Group</button>
     </div>
 </div>
 
@@ -39,8 +50,8 @@
                     <a href="#" class="btn btn-link">Download File 2</a>
                 </div>
                 <div class="card-footer">
-                    <button class="btn btn-info mr-2">Edit Post</button>
-                    <button class="btn btn-danger">Delete Post</button>
+                    <button class="btn btn-info mr-2"><i class="i-Pen-5"></i> Edit Post</button>
+                    <button class="btn btn-danger"><i class="i-Remove"></i>  Delete Post</button>
                 </div>
             </div>
 

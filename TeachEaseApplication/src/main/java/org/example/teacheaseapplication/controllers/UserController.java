@@ -3,6 +3,7 @@ package org.example.teacheaseapplication.controllers;
 import lombok.AllArgsConstructor;
 import org.example.teacheaseapplication.dto.requests.ProfileInformationRequest;
 import org.example.teacheaseapplication.dto.requests.UpdatePasswordRequest;
+import org.example.teacheaseapplication.dto.responses.NameLastnameResponse;
 import org.example.teacheaseapplication.dto.responses.PaginatedUsersResponse;
 import org.example.teacheaseapplication.dto.responses.UserResponse;
 import org.example.teacheaseapplication.services.IUserService;
@@ -64,6 +65,10 @@ public class UserController {
             @RequestParam(value = "keyword", required = false) String keyword)
     {
         return userService.getUsers(page, size,keyword);
+    }
+    @GetMapping("/name-lastname")
+    public ResponseEntity<NameLastnameResponse> getUserNameAndLastName(@RequestParam String email) {
+        return userService.getUserNameAndLastName(email);
     }
 
 }

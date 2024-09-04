@@ -10,6 +10,7 @@ import {TagInputModule} from "ngx-chips";
 import {CustomFormsModule} from "ngx-custom-validators";
 import {SharedComponentsModule} from "../../shared/components/shared-components.module";
 import { UpdateGroupFormComponent } from './update-group-form/update-group-form.component';
+import { AddPostFormComponent } from './add-post-form/add-post-form.component';
 
 
 @NgModule({
@@ -17,6 +18,7 @@ import { UpdateGroupFormComponent } from './update-group-form/update-group-form.
     GroupComponent,
     AddGroupFormComponent,
     UpdateGroupFormComponent,
+    AddPostFormComponent,
   ],
     imports: [
         CommonModule,

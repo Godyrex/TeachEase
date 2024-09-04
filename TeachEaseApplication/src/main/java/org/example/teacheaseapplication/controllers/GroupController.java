@@ -1,5 +1,6 @@
 package org.example.teacheaseapplication.controllers;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.example.teacheaseapplication.dto.requests.GroupRequest;
 import org.example.teacheaseapplication.dto.requests.PostRequest;
@@ -81,5 +82,15 @@ public class GroupController {
                 .content(content)
                 .build();
         return groupService.addPost(groupId, postRequest, files);
+    }
+    @PreAuthorize("isAuthenticated()&&@customAuthorization.hasPermissionToGroup(#groupId)")
+    @GetMapping("/{groupId}/{fileName:.+}/download")
+    public ResponseEntity<byte[]> downloadExcel(@PathVariable @NotNull String groupId, @PathVariable @NotNull String fileName) {
+        return groupService.downloadFile(groupId,fileName);
+    }
+    @DeleteMapping("/{groupId}/deletePost")
+    @PreAuthorize("hasRole('TEACHER')&&@customAuthorization.hasPermissionToGroup(#groupId)")
+    public ResponseEntity<HttpStatus> deletePost(@PathVariable String groupId,@RequestParam String postID) {
+        return groupService.deletePost(groupId,postID);
     }
 }
