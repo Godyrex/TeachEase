@@ -4,4 +4,5 @@ export interface PostResponse {
     content?: string;
     createdAt?: Date;
     files?: string[];
+    groupId?: string;
 }

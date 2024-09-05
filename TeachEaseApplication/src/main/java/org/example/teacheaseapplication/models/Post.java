@@ -18,4 +18,5 @@ public class Post {
     private String content;
     private List<String> files;
     private LocalDateTime createdAt;
+    private String groupId;
 }

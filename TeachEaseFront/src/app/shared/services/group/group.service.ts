@@ -4,6 +4,8 @@ import { Observable } from 'rxjs';
 import { GroupRequest } from '../../models/group/GroupRequest';
 import { GroupResponse } from '../../models/group/GroupResponse';
 import {PostRequest} from "../../models/group/PostRequest";
+import {PostResponse} from "../../models/group/PostResponse";
+import {PaginatedPostResponse} from "../../models/group/PaginatedPostResponse";
 
 @Injectable({
   providedIn: 'root'
@@ -50,8 +52,12 @@ export class GroupService {
 
     return this.http.put<void>(`${this.apiUrl}/${groupId}/addPost`, formData);
   }
-
-
+  getPost(groupId: string, postId: string): Observable<PostResponse> {
+    return this.http.get<PostResponse>(`${this.apiUrl}/${groupId}/post/${postId}`);
+  }
+  getPosts(groupId: string,currentPage: number,pageSize: number): Observable<PaginatedPostResponse> {
+    return this.http.get<PaginatedPostResponse>(`${this.apiUrl}/${groupId}/posts`, { params: { page: currentPage.toString(), size: pageSize.toString() } });
+  }
   deletePost(groupId: string, postID: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${groupId}/deletePost`, { params: { postID } });
   }

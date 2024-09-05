@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.teacheaseapplication.dto.requests.GroupRequest;
 import org.example.teacheaseapplication.dto.requests.PostRequest;
 import org.example.teacheaseapplication.dto.responses.GroupResponse;
+import org.example.teacheaseapplication.dto.responses.PaginatedPostResponse;
+import org.example.teacheaseapplication.dto.responses.PostResponse;
 import org.example.teacheaseapplication.models.Group;
 import org.example.teacheaseapplication.models.Post;
 import org.example.teacheaseapplication.models.Role;
@@ -12,6 +14,11 @@ import org.example.teacheaseapplication.models.User;
 import org.example.teacheaseapplication.repositories.GroupRepository;
 import org.example.teacheaseapplication.repositories.PostRepository;
 import org.example.teacheaseapplication.repositories.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,12 +28,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.security.Principal;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
+import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor
@@ -36,6 +40,7 @@ public class GroupServiceImpl implements IGroupService{
     private final UserRepository userRepository;
     private final AuthServiceImpl authService;
     private final PostRepository postRepository;
+    private final MongoTemplate mongoTemplate;
 
     @Override
     public ResponseEntity<GroupResponse> getGroup(String groupId) {
@@ -211,15 +216,42 @@ public class GroupServiceImpl implements IGroupService{
                 .title(postRequest.getTitle())
                 .content(postRequest.getContent())
                 .createdAt(LocalDateTime.now())
+                .files(uploadFiles(files, group))
+                .groupId(groupId)
                 .build();
-        //TODO save files
         postRepository.save(post);
         group.getPosts().add(post.getId());
         log.info("Post added to group");
         groupRepository.save(group);
         return ResponseEntity.ok(HttpStatus.OK);
     }
-
+    private List<String> uploadFiles(MultipartFile[] files,Group group) {
+        log.info("Uploading files");
+        String baseDir = "upload" + File.separator + group.getId()+ File.separator;
+        return Stream.of(files).map(file -> {
+            try {
+                File dir = new File(baseDir);
+                if (!dir.exists()) {
+                    boolean dirsCreated = dir.mkdirs();
+                    if (!dirsCreated) {
+                        throw new IOException("Failed to create directories");
+                    }
+                }
+                String originalFileName = file.getOriginalFilename();
+                String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+                // Generate a random filename
+                String newFileName = UUID.randomUUID() + extension;
+                // Define the path to the new file
+                String filePath = baseDir + newFileName;
+                log.info("File path: " + filePath);
+                Files.copy(file.getInputStream(), new File(filePath).toPath());
+                log.info("File uploaded");
+                return filePath;
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }).toList();
+    }
     @Override
     public ResponseEntity<byte[]> downloadFile(String groupId, String fileName) {
         log.info("Downloading file {}", fileName);
@@ -266,5 +298,41 @@ public class GroupServiceImpl implements IGroupService{
         postRepository.deleteById(postID);
         groupRepository.save(group);
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<PostResponse> getPost(String postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new NoSuchElementException("Post not found"));
+        return ResponseEntity.ok(PostResponse.builder()
+                .id(post.getId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .files(post.getFiles())
+                .createdAt(post.getCreatedAt())
+                .build());
+    }
+
+    @Override
+    public ResponseEntity<PaginatedPostResponse> getPostsByGroup(String groupId, int page, int size) {
+        log.info("page {} , size {}", page,size);
+        Group group = groupRepository.findById(groupId).orElseThrow(() -> new NoSuchElementException("Group not found"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<Post> postsPage = postRepository.findByGroupId(group.getId(), pageable);
+        log.info("Posts found: {}", postsPage.getTotalElements());
+        log.info("Posts page: {}", postsPage.getNumber());
+        log.info("Posts total pages: {}", postsPage.getTotalPages());
+        log.info("Posts size: {}", postsPage.getSize());
+        return ResponseEntity.ok(PaginatedPostResponse.builder()
+                .postResponses(postsPage.getContent().stream().map(post -> PostResponse.builder()
+                        .id(post.getId())
+                        .title(post.getTitle())
+                        .content(post.getContent())
+                        .files(post.getFiles())
+                        .createdAt(post.getCreatedAt())
+                        .build()).toList())
+                .totalPages(postsPage.getTotalPages())
+                .totalElements(postsPage.getTotalElements())
+                .currentPage(postsPage.getNumber())
+                .build());
     }
 }

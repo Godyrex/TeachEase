@@ -5,12 +5,11 @@ import { GroupRoutingModule } from './group-routing.module';
 import { GroupComponent } from './group/group.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { AddGroupFormComponent } from './add-group-form/add-group-form.component';
-import {MatDialogModule} from "@angular/material/dialog";
 import {TagInputModule} from "ngx-chips";
-import {CustomFormsModule} from "ngx-custom-validators";
 import {SharedComponentsModule} from "../../shared/components/shared-components.module";
 import { UpdateGroupFormComponent } from './update-group-form/update-group-form.component';
 import { AddPostFormComponent } from './add-post-form/add-post-form.component';
+import {InfiniteScrollModule} from "ngx-infinite-scroll";
 
 
 @NgModule({
@@ -27,6 +26,7 @@ import { AddPostFormComponent } from './add-post-form/add-post-form.component';
         ReactiveFormsModule,
         TagInputModule,
         SharedComponentsModule,
+        InfiniteScrollModule,
     ]
 })
 export class GroupModule { }

@@ -14,4 +14,5 @@ public class PostResponse {
     private String content;
     private List<String> files;
     private LocalDateTime createdAt;
+    private String groupId;
 }

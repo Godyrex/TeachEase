@@ -39,35 +39,27 @@
 
 
         <!-- Posts Section -->
-        <div class="col-md-8">
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h5 class="mb-0">Post Title 1</h5>
-                </div>
-                <div class="card-body">
-                    <p class="card-text">Post Description: This is a brief description of the first post.</p>
-                    <a href="#" class="btn btn-link">Download File 1</a>
-                    <a href="#" class="btn btn-link">Download File 2</a>
-                </div>
-                <div class="card-footer">
-                    <button class="btn btn-info mr-2"><i class="i-Pen-5"></i> Edit Post</button>
-                    <button class="btn btn-danger"><i class="i-Remove"></i>  Delete Post</button>
-                </div>
-            </div>
-
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h5 class="mb-0">Post Title 2</h5>
-                </div>
-                <div class="card-body">
-                    <p class="card-text">Post Description: This is a brief description of the second post.</p>
-                    <a href="#" class="btn btn-link">Download File 1</a>
-                </div>
-                <div class="card-footer">
-                    <button class="btn btn-info mr-2">Edit Post</button>
-                    <button class="btn btn-danger">Delete Post</button>
+        <div infiniteScroll [infiniteScrollDistance]="2" (scrolled)="searchMorePosts()" class="col-md-8">
+            <div *ngIf="posts && posts.length > 0; else noPostsTemplate">
+                <div *ngFor="let post of posts" class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">{{ post.title }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">{{ post.content }}</p>
+                        <a *ngFor="let file of post.files" [href]="file" class="btn btn-link">Download File</a>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-warning mr-2"><i class="i-Pen-5"></i> Edit Post</button>
+                        <button class="btn btn-danger"><i class="i-Remove"></i> Delete Post</button>
+                    </div>
                 </div>
             </div>
+            <ng-template #noPostsTemplate>
+                <div class="alert alert-info" role="alert">
+                    No posts available.
+                </div>
+            </ng-template>
         </div>
 
         <!-- Right Sidebar -->

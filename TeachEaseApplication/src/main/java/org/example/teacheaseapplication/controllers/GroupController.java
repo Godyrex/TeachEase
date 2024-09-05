@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import org.example.teacheaseapplication.dto.requests.GroupRequest;
 import org.example.teacheaseapplication.dto.requests.PostRequest;
 import org.example.teacheaseapplication.dto.responses.GroupResponse;
+import org.example.teacheaseapplication.dto.responses.PaginatedPostResponse;
+import org.example.teacheaseapplication.dto.responses.PostResponse;
 import org.example.teacheaseapplication.security.CustomAuthorization;
 import org.example.teacheaseapplication.services.IGroupService;
 import org.springframework.http.HttpStatus;
@@ -92,5 +94,19 @@ public class GroupController {
     @PreAuthorize("hasRole('TEACHER')&&@customAuthorization.hasPermissionToGroup(#groupId)")
     public ResponseEntity<HttpStatus> deletePost(@PathVariable String groupId,@RequestParam String postID) {
         return groupService.deletePost(groupId,postID);
+    }
+    @GetMapping("/{groupId}/post/{postId}")
+    @PreAuthorize("isAuthenticated()&&@customAuthorization.hasPermissionToGroup(#groupId)")
+    public ResponseEntity<PostResponse> getPost(@PathVariable String groupId, @PathVariable String postId) {
+        return groupService.getPost(postId);
+    }
+    @GetMapping("/{groupId}/posts")
+    @PreAuthorize("isAuthenticated()&&@customAuthorization.hasPermissionToGroup(#groupId)")
+    public ResponseEntity<PaginatedPostResponse> getPostsByGroup(
+            @PathVariable String groupId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "4") int size
+    ) {
+        return groupService.getPostsByGroup(groupId, page, size);
     }
 }

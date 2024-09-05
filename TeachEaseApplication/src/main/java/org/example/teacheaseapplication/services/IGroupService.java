@@ -3,6 +3,8 @@ package org.example.teacheaseapplication.services;
 import org.example.teacheaseapplication.dto.requests.GroupRequest;
 import org.example.teacheaseapplication.dto.requests.PostRequest;
 import org.example.teacheaseapplication.dto.responses.GroupResponse;
+import org.example.teacheaseapplication.dto.responses.PaginatedPostResponse;
+import org.example.teacheaseapplication.dto.responses.PostResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,4 +25,8 @@ public interface IGroupService {
     ResponseEntity<byte[]> downloadFile(String groupId, String fileName);
 
     ResponseEntity<HttpStatus> deletePost(String groupId, String postID);
+
+    ResponseEntity<PostResponse> getPost( String postId);
+
+    ResponseEntity<PaginatedPostResponse> getPostsByGroup(String groupId, int page, int size);
 }

@@ -12,6 +12,8 @@ import {UserService} from "../../../shared/services/user/user.service";
 import {DomSanitizer} from "@angular/platform-browser";
 import {AddPostFormComponent} from "../add-post-form/add-post-form.component";
 import {catchError, map, switchMap} from "rxjs/operators";
+import {PostResponse} from "../../../shared/models/group/PostResponse";
+import {PaginatedPostResponse} from "../../../shared/models/group/PaginatedPostResponse";
 
 @Component({
   selector: 'app-group',
@@ -22,9 +24,13 @@ export class GroupComponent implements OnInit{
   private routeSub: Subscription;
   id: string;
   group: GroupResponse;
+  posts: PostResponse[];
+  paginatedPostResponse: PaginatedPostResponse;
   user: UserResponse;
     displayTeacherInfo: string;
     imageSrc: any;
+    page = 0;
+    size = 1;
     teacherNameAndLastName$: Observable<{name: string, lastName: string} | null>;
   constructor(
       private route: ActivatedRoute,
@@ -44,6 +50,7 @@ export class GroupComponent implements OnInit{
     this.sessionStorageService.getUser().subscribe((user) => {
       this.user = user;
     })
+      this.getPosts();
   }
   openUpdateGroupForm() {
     const dialogRef = this.modalService.open(UpdateGroupFormComponent, {
@@ -60,6 +67,33 @@ export class GroupComponent implements OnInit{
   }
   isTeacherInGroup(){
     return this.group.teacher == this.user.email;
+  }
+    searchMorePosts() {
+        this.page++;
+        if(this.paginatedPostResponse.totalPages > this.page) {
+          this.groupService.getPosts(this.id, this.page, this.size).subscribe(
+              (paginatedPostResponse) => {
+                  console.log('Posts:', paginatedPostResponse);
+                  this.posts = this.posts.concat(paginatedPostResponse.postResponses);
+                  this.paginatedPostResponse = paginatedPostResponse;
+              }, error => {
+                  console.error('Error fetching posts:', error);
+                  this.toastr.error('Error fetching posts');
+              }
+          );
+      }
+    }
+  getPosts(){
+      this.groupService.getPosts(this.id, this.page, this.size).subscribe(
+            (paginatedPostResponse) => {
+                console.log('Posts:', paginatedPostResponse);
+                this.posts = paginatedPostResponse.postResponses;
+                this.paginatedPostResponse = paginatedPostResponse;
+            }, error => {
+                console.error('Error fetching posts:', error);
+                this.toastr.error('Error fetching posts');
+            }
+        );
   }
     fetchGroupAndTeacher() {
         this.groupService.getGroup(this.id).pipe(
@@ -193,4 +227,5 @@ export class GroupComponent implements OnInit{
         }
     );
   }
+
 }
