@@ -22,7 +22,7 @@ public interface IGroupService {
     ResponseEntity<HttpStatus> removeStudentFromGroup(String groupId, String studentEmail);
     ResponseEntity<HttpStatus> addPost(String groupId, PostRequest postRequest, MultipartFile[] files);
 
-    ResponseEntity<byte[]> downloadFile(String groupId, String fileName);
+    ResponseEntity<byte[]> downloadFile(String postId, String fileName);
 
     ResponseEntity<HttpStatus> deletePost(String groupId, String postID);
 

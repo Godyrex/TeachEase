@@ -23,6 +23,8 @@ import {PaginatedPostResponse} from "../../../shared/models/group/PaginatedPostR
 export class GroupComponent implements OnInit{
   private routeSub: Subscription;
   id: string;
+  loadingPosts = false;
+  loadingExtraPosts = false;
   group: GroupResponse;
   posts: PostResponse[];
   paginatedPostResponse: PaginatedPostResponse;
@@ -30,7 +32,7 @@ export class GroupComponent implements OnInit{
     displayTeacherInfo: string;
     imageSrc: any;
     page = 0;
-    size = 1;
+    size = 3;
     teacherNameAndLastName$: Observable<{name: string, lastName: string} | null>;
   constructor(
       private route: ActivatedRoute,
@@ -69,29 +71,35 @@ export class GroupComponent implements OnInit{
     return this.group.teacher == this.user.email;
   }
     searchMorePosts() {
-        this.page++;
-        if(this.paginatedPostResponse.totalPages > this.page) {
-          this.groupService.getPosts(this.id, this.page, this.size).subscribe(
+        if(this.paginatedPostResponse && this.paginatedPostResponse.totalPages > this.page+1) {
+            this.loadingExtraPosts = true;
+            this.page++;
+            this.groupService.getPosts(this.id, this.page, this.size).subscribe(
               (paginatedPostResponse) => {
                   console.log('Posts:', paginatedPostResponse);
                   this.posts = this.posts.concat(paginatedPostResponse.postResponses);
                   this.paginatedPostResponse = paginatedPostResponse;
+                    this.loadingExtraPosts = false;
               }, error => {
                   console.error('Error fetching posts:', error);
                   this.toastr.error('Error fetching posts');
+                    this.loadingExtraPosts = false;
               }
           );
       }
     }
   getPosts(){
+      this.loadingPosts = true;
       this.groupService.getPosts(this.id, this.page, this.size).subscribe(
             (paginatedPostResponse) => {
                 console.log('Posts:', paginatedPostResponse);
                 this.posts = paginatedPostResponse.postResponses;
                 this.paginatedPostResponse = paginatedPostResponse;
+                this.loadingPosts = false;
             }, error => {
                 console.error('Error fetching posts:', error);
                 this.toastr.error('Error fetching posts');
+                this.loadingPosts = false;
             }
         );
   }
@@ -165,6 +173,26 @@ export class GroupComponent implements OnInit{
     }
     );
   }
+    deletePostModal(content: any, postID: string) {
+        this.modalService.open(content, { ariaLabelledBy: 'delete post' })
+            .result.then((result) => {
+            if (result === 'Ok') {
+                this.deletePost(postID);
+            }
+        }, (reason) => {
+            console.log('Err!', reason);
+        });
+    }
+  deletePost(postID: string)
+  {
+    this.groupService.deletePost(this.id, postID).subscribe((group) => {
+      this.posts = this.posts.filter(post => post.id !== postID);
+    }, (error) => {
+        console.log(error);
+        this.toastr.error(error.error, 'Error');
+    }
+    );
+  }
   deleteGroup(){
     this.groupService.deleteGroup(this.id).subscribe((group) => {
       this.router.navigate(['/']);
@@ -174,8 +202,8 @@ export class GroupComponent implements OnInit{
     }
     );
   }
-    downloadFile(fileName: string) {
-        this.groupService.downloadFile(this.group.id, fileName).subscribe(
+    downloadFile(fileName: string, postId: string) {
+        this.groupService.downloadFile(this.group.id,postId, fileName).subscribe(
             response => {
                 const blob = new Blob([response]);
 
@@ -208,24 +236,15 @@ export class GroupComponent implements OnInit{
     dialogRef.componentInstance.groupResponse = this.group;
     dialogRef.result.then(
         () => {
-          this.fetchGroupAndTeacher();
+            this.page = 0;
+            this.getPosts();
         },
         () => {
-          this.fetchGroupAndTeacher();
+            this.page = 0;
+            this.getPosts();
         }
     );
   }
 
-  deletePost(postID: string) {
-    this.groupService.deletePost(this.group.id, postID).subscribe(
-        () => {
-          this.toastr.success('Post deleted successfully');
-          this.fetchGroupAndTeacher();
-        }, error => {
-          console.error('Error deleting post:', error);
-          this.toastr.error('Error deleting post');
-        }
-    );
-  }
 
 }

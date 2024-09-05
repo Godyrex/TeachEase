@@ -39,21 +39,29 @@
 
 
         <!-- Posts Section -->
-        <div infiniteScroll [infiniteScrollDistance]="2" (scrolled)="searchMorePosts()" class="col-md-8">
-            <div *ngIf="posts && posts.length > 0; else noPostsTemplate">
+        <div infiniteScroll [infiniteScrollDistance]="1" (scrolled)="searchMorePosts()" class="col-md-8">
+            <div *ngIf="loadingPosts" class="loadscreen">
+                <img src="assets/images/logo.png" class="logo mb-3" style="display: none" alt="">
+                <div class="loader-bubble loader-bubble-primary d-block"></div>
+            </div>
+            <div *ngIf="!loadingPosts && posts && posts.length > 0; else noPostsTemplate">
                 <div *ngFor="let post of posts" class="card mb-3">
-                    <div class="card-header">
+                    <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">{{ post.title }}</h5>
+                        <small><i class="i-Clock"></i> {{ post.createdAt | date: 'dd/MM/yyyy HH:mm' }}</small>
                     </div>
                     <div class="card-body">
                         <p class="card-text">{{ post.content }}</p>
-                        <a *ngFor="let file of post.files" [href]="file" class="btn btn-link">Download File</a>
+                        <a *ngFor="let file of post.files" (click)="downloadFile(file,post.id)" class="btn btn-link"><i class="i-File"></i> {{file}}</a>
                     </div>
                     <div class="card-footer">
-                        <button class="btn btn-warning mr-2"><i class="i-Pen-5"></i> Edit Post</button>
-                        <button class="btn btn-danger"><i class="i-Remove"></i> Delete Post</button>
+                        <button class="btn btn-danger" *ngIf="isTeacherInGroup()" (click)="deletePostModal(modalConfirmDeletePost,post.id)"><i class="i-Remove"></i> Delete Post</button>
                     </div>
                 </div>
+            </div>
+            <div *ngIf="loadingExtraPosts" class="loadscreen">
+                <img src="assets/images/logo.png" class="logo mb-3" style="display: none" alt="">
+                <div class="loader-bubble loader-bubble-primary d-block"></div>
             </div>
             <ng-template #noPostsTemplate>
                 <div class="alert alert-info" role="alert">
@@ -122,16 +130,16 @@
             <button type="button" ngbAutofocus class="btn btn-danger btn-rounded" (click)="modal.close('Ok')">Ok</button>
         </div>
     </ng-template>
-    <ng-template #modalConfirmLeaveGroup let-modal>
+    <ng-template #modalConfirmDeletePost let-modal>
         <div class="modal-header">
-            <h4 class="modal-title" id="modal-title-Leave-GROUP">Leave Group</h4>
+            <h4 class="modal-title" id="modal-title-Delete-POST">Delete Post</h4>
             <button type="button" class="close" aria-label="Close button" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
         <div class="modal-body">
-            <p><strong>Are you sure you want to leave <span class="text-primary">{{ group.name }}</span>?</strong></p>
-            <p>You will no longer be a member of this group.
+            <p><strong>Are you sure you want to delete this post?</strong></p>
+            <p>All information associated with this post will be permanently deleted.
                 <span class="text-danger">This operation cannot be undone.</span>
             </p>
         </div>

@@ -37,8 +37,9 @@ export class GroupService {
   updateGroup(groupId: string, groupRequest:GroupRequest): Observable<void> {
     return this.http.put<void>(`${this.apiUrl}/${groupId}`, groupRequest);
   }
-  downloadFile(groupId: string, fileName: string): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/${groupId}/${fileName}/download`, { responseType: 'blob' });
+  downloadFile(groupId: string,postId: string, fileName: string): Observable<Blob> {
+    console.log(`${this.apiUrl}/${groupId}/${postId}/${fileName}/download`);
+    return this.http.get(`${this.apiUrl}/${groupId}/${postId}/${fileName}/download`, { responseType: 'blob' });
   }
   addPost(groupId: string, coursePostRequest: PostRequest, files: File[]): Observable<void> {
     const formData: FormData = new FormData();

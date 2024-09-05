@@ -216,7 +216,7 @@ public class GroupServiceImpl implements IGroupService{
                 .title(postRequest.getTitle())
                 .content(postRequest.getContent())
                 .createdAt(LocalDateTime.now())
-                .files(uploadFiles(files, group))
+                .files(files != null ? uploadFiles(files, group) : null)
                 .groupId(groupId)
                 .build();
         postRepository.save(post);
@@ -253,17 +253,9 @@ public class GroupServiceImpl implements IGroupService{
         }).toList();
     }
     @Override
-    public ResponseEntity<byte[]> downloadFile(String groupId, String fileName) {
+    public ResponseEntity<byte[]> downloadFile(String postId, String fileName) {
         log.info("Downloading file {}", fileName);
-        Group group = groupRepository.findById(groupId).orElseThrow();
-        if (group.getPosts() == null || group.getPosts().isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        List<Post> posts = postRepository.findAllById(group.getPosts());
-        if(posts.isEmpty()){
-            return ResponseEntity.notFound().build();
-        }
-        for (Post post : posts) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new NoSuchElementException("Post not found"));
             for (String filePath : post.getFiles()) {
                 String normalizedFilePath = filePath.replace("\\", "/");
                 String extractedFileName = normalizedFilePath.substring(normalizedFilePath.lastIndexOf('/') + 1);
@@ -276,7 +268,6 @@ public class GroupServiceImpl implements IGroupService{
                     }
                 }
             }
-        }
         return ResponseEntity.notFound().build();
     }
 
@@ -327,12 +318,19 @@ public class GroupServiceImpl implements IGroupService{
                         .id(post.getId())
                         .title(post.getTitle())
                         .content(post.getContent())
-                        .files(post.getFiles())
+                        .files(post.getFiles() != null ? returnOnlyFileName(post.getFiles()) : null)
                         .createdAt(post.getCreatedAt())
                         .build()).toList())
                 .totalPages(postsPage.getTotalPages())
                 .totalElements(postsPage.getTotalElements())
                 .currentPage(postsPage.getNumber())
                 .build());
+    }
+    public List<String> returnOnlyFileName(List<String> files) {
+        log.info("Returning only file name {}", files);
+        return files.stream()
+                .map(file -> file.replace("\\", "/"))
+                .map(file -> file.substring(file.lastIndexOf('/') + 1))
+                .toList();
     }
 }

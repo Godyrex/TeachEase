@@ -24,8 +24,8 @@ export class AddPostFormComponent {
   ) {
   }
   addPostForm = this.formBuilder.group({
-    title: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
-    content: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+    title: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+    content: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(1000)]],
   });
   shouldShowErrorAddPost(controlName: string, errorName: string): boolean {
     const control = this.addPostForm.get(controlName);
@@ -43,11 +43,19 @@ export class AddPostFormComponent {
             this.loading = false;
             this.addPostForm.reset();
             this.files = [];
+            const fileInput = document.getElementById('files') as HTMLInputElement;
+            if (fileInput) {
+              fileInput.value = '';
+            }
           }, error => {
             console.error('Error adding post:', error);
             this.toastr.error('Error adding post');
             this.loading = false;
             this.files = [];
+            const fileInput = document.getElementById('files') as HTMLInputElement;
+            if (fileInput) {
+              fileInput.value = '';
+            }
           }
       );
     } else {

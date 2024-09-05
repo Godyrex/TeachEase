@@ -78,7 +78,7 @@ public class GroupController {
             @PathVariable String groupId,
             @RequestPart("title") String title,
             @RequestPart("content") String content,
-            @RequestPart("files") MultipartFile[] files) {
+            @RequestPart(value = "files",required = false) MultipartFile[] files) {
         PostRequest postRequest = PostRequest.builder()
                 .title(title)
                 .content(content)
@@ -86,9 +86,9 @@ public class GroupController {
         return groupService.addPost(groupId, postRequest, files);
     }
     @PreAuthorize("isAuthenticated()&&@customAuthorization.hasPermissionToGroup(#groupId)")
-    @GetMapping("/{groupId}/{fileName:.+}/download")
-    public ResponseEntity<byte[]> downloadExcel(@PathVariable @NotNull String groupId, @PathVariable @NotNull String fileName) {
-        return groupService.downloadFile(groupId,fileName);
+    @GetMapping("/{groupId}/{postId}/{fileName:.+}/download")
+    public ResponseEntity<byte[]> downloadExcel(@PathVariable @NotNull String groupId,@PathVariable @NotNull String postId, @PathVariable @NotNull String fileName) {
+        return groupService.downloadFile(postId,fileName);
     }
     @DeleteMapping("/{groupId}/deletePost")
     @PreAuthorize("hasRole('TEACHER')&&@customAuthorization.hasPermissionToGroup(#groupId)")
