@@ -1,17 +1,13 @@
-package org.example.teacheaseapplication.models;
+package org.example.teacheaseapplication.dto.responses;
 
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
 @Data
-@Document(collection = "presences")
 @Builder
-public class Presence {
-    @Id
+public class PresenceResponse {
     private String id;
     private String group;
     private String session;

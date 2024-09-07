@@ -19,6 +19,8 @@ import {SessionService} from "../../../shared/services/session/session.service";
 import {SessionResponse} from "../../../shared/models/session/SessionResponse";
 import {UpdateSessionFormComponent} from "../../session/update-session-form/update-session-form.component";
 import {ViewSessionComponent} from "../../session/view-session/view-session.component";
+import {PresenceResponse} from "../../../shared/models/presence/PresenceResponse";
+import {PresenceService} from "../../../shared/services/presence/presence.service";
 
 @Component({
   selector: 'app-group',
@@ -28,6 +30,7 @@ import {ViewSessionComponent} from "../../session/view-session/view-session.comp
 export class GroupComponent implements OnInit{
   private routeSub: Subscription;
   id: string;
+  loadingStudentPresences = false;
     loadingSessions = false;
   loadingPosts = false;
   loadingExtraPosts = false;
@@ -37,6 +40,7 @@ export class GroupComponent implements OnInit{
   user: UserResponse;
   allSessions = false;
   sessionResponses: SessionResponse[];
+  studentPresences: PresenceResponse[];
     displayTeacherInfo: string;
     imageSrc: any;
     page = 0;
@@ -51,7 +55,8 @@ export class GroupComponent implements OnInit{
       private sessionStorageService: SessionStorageService,
       private userService: UserService,
       private sanitizer: DomSanitizer,
-      private sessionService: SessionService
+      private sessionService: SessionService,
+      private presenceService: PresenceService
   ) { }
   ngOnInit(): void {
     this.routeSub = this.route.params.subscribe(params => {
@@ -137,7 +142,15 @@ export class GroupComponent implements OnInit{
             this.loadingSessions = false;
         });
     }
-
+    getStudentPresence(){
+        this.presenceService.getPresencesByStudentAndGroup(this.id).subscribe((presences) => {
+            console.log('Presences:', presences);
+            this.studentPresences = presences;
+        }, (error) => {
+            console.error('Error fetching presences:', error);
+            this.toastr.error('Error fetching presences');
+        });
+    }
     getAllSessions() {
         this.loadingSessions = true;
         this.sessionService.getSessionByGroupId(this.id).subscribe((sessions) => {
