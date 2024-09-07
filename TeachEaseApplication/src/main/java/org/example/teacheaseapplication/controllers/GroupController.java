@@ -109,4 +109,20 @@ public class GroupController {
     ) {
         return groupService.getPostsByGroup(groupId, page, size);
     }
+    @PutMapping("/{groupId}/editPost")
+    @PreAuthorize("hasRole('TEACHER')&&@customAuthorization.hasPermissionToGroup(#groupId)")
+    public ResponseEntity<HttpStatus> editPost(
+            @PathVariable String groupId,
+            @RequestParam String postId,
+            @RequestParam String title,
+            @RequestParam String content,
+            @RequestPart(value = "files",required = false) MultipartFile[] files,
+            @RequestParam(required = false) List<String> filesToBeDeleted)
+     {
+        PostRequest postRequest = PostRequest.builder()
+                .title(title)
+                .content(content)
+                .build();
+        return groupService.editPost(groupId, postId, postRequest, files, filesToBeDeleted);
+    }
 }

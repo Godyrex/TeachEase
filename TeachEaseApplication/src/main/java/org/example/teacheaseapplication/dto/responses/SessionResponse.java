@@ -14,7 +14,5 @@ public class SessionResponse {
     private LocalDateTime scheduledTime;
     private String url;
     private String location;
-    private double latitude;
-    private double longitude;
     private String group;
 }

@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -28,8 +29,6 @@ public class SessionServiceImpl implements ISessionService{
                 .scheduledTime(session.getScheduledTime())
                 .url(session.getUrl())
                 .location(session.getLocation())
-                .latitude(session.getLatitude())
-                .longitude(session.getLongitude())
                 .group(session.getGroup())
                 .build());
     }
@@ -44,8 +43,6 @@ public class SessionServiceImpl implements ISessionService{
                 .scheduledTime(s.getScheduledTime())
                 .url(s.getUrl())
                 .location(s.getLocation())
-                .latitude(s.getLatitude())
-                .longitude(s.getLongitude())
                 .group(s.getGroup())
                 .build()).toList());
     }
@@ -58,8 +55,6 @@ public class SessionServiceImpl implements ISessionService{
                 .scheduledTime(sessionRequest.getScheduledTime())
                 .url(sessionRequest.getUrl())
                 .location(sessionRequest.getLocation())
-                .latitude(sessionRequest.getLatitude())
-                .longitude(sessionRequest.getLongitude())
                 .group(groupId)
                 .build();
         sessionRepository.save(session);
@@ -88,8 +83,6 @@ public class SessionServiceImpl implements ISessionService{
         session.setScheduledTime(sessionRequest.getScheduledTime());
         session.setUrl(sessionRequest.getUrl());
         session.setLocation(sessionRequest.getLocation());
-        session.setLatitude(sessionRequest.getLatitude());
-        session.setLongitude(sessionRequest.getLongitude());
         sessionRepository.save(session);
         return ResponseEntity.ok(HttpStatus.OK);
     }
@@ -99,5 +92,20 @@ public class SessionServiceImpl implements ISessionService{
         Session session = sessionRepository.findById(sessionId).orElseThrow(() -> new NoSuchElementException("Session not found"));
         sessionRepository.delete(session);
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<List<SessionResponse>> getUpcomingSessionsByGroupId(String groupId) {
+        List<Session> session = sessionRepository.findByGroupAndScheduledTimeAfter(groupId, LocalDateTime.now())
+                .orElseThrow(() -> new NoSuchElementException("Session not found"));
+        return ResponseEntity.ok(session.stream().map(s -> SessionResponse.builder()
+                .id(s.getId())
+                .title(s.getTitle())
+                .description(s.getDescription())
+                .scheduledTime(s.getScheduledTime())
+                .url(s.getUrl())
+                .location(s.getLocation())
+                .group(s.getGroup())
+                .build()).toList());
     }
 }

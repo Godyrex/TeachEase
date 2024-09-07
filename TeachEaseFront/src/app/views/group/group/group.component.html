@@ -75,25 +75,29 @@
                 <div class="card mb-3">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5>Upcoming Sessions</h5>
-                        <button class="btn btn-success btn-sm"><i class="fas fa-calendar-plus"></i> New Session</button>
+                        <button *ngIf="isTeacherInGroup()" (click)="openAddSessionForm()" class="btn btn-success btn-sm"><i class="fas fa-calendar-plus"></i> New Session</button>
                     </div>
                     <div class="card-body">
-                        <ul class="list-group">
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <span>Session 1: HTML Basics - 01/09/2024 - 09:00</span>
-                                <div>
-                                    <button class="btn btn-warning btn-sm me-2"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
-                                </div>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <span>Session 2: Spring Basics - 02/09/2024 - 11:30</span>
-                                <div>
-                                    <button class="btn btn-warning btn-sm me-2"><i class="fas fa-edit"></i> Edit</button>
-                                    <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
-                                </div>
-                            </li>
-                        </ul>
+                        <div *ngIf="loadingSessions" class="loadscreen">
+                            <img src="assets/images/logo.png" class="logo mb-3" style="display: none" alt="">
+                            <div class="loader-bubble loader-bubble-primary d-block"></div>
+                        </div>
+                        <div *ngIf="!loadingSessions && sessionResponses && sessionResponses.length > 0; else noSessionsTemplate">
+                            <ul class="list-group">
+                                <li *ngFor="let session of sessionResponses" class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>{{ session.title }} - {{ session.scheduledTime | date: 'dd/MM/yyyy HH:mm' }}</span>
+                                    <div>
+                                        <button class="btn btn-warning btn-sm me-2"><i class="fas fa-edit"></i> Edit</button>
+                                        <button *ngIf="isTeacherInGroup()" (click)="deleteSessionModal(modalConfirmDeleteSession,session.id)" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <ng-template #noSessionsTemplate>
+                            <div class="alert alert-info" role="alert">
+                                No sessions available.
+                            </div>
+                        </ng-template>
                     </div>
                 </div>
             <div class="card mb-3">
@@ -140,6 +144,24 @@
         <div class="modal-body">
             <p><strong>Are you sure you want to delete this post?</strong></p>
             <p>All information associated with this post will be permanently deleted.
+                <span class="text-danger">This operation cannot be undone.</span>
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary btn-rounded" (click)="modal.dismiss('cancel')">Cancel</button>
+            <button type="button" ngbAutofocus class="btn btn-danger btn-rounded" (click)="modal.close('Ok')">Ok</button>
+        </div>
+    </ng-template>
+    <ng-template #modalConfirmDeleteSession let-modal>
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-title-Delete-SESSION">Delete Session</h4>
+            <button type="button" class="close" aria-label="Close button" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p><strong>Are you sure you want to delete this session?</strong></p>
+            <p>All information associated with this session will be permanently deleted.
                 <span class="text-danger">This operation cannot be undone.</span>
             </p>
         </div>

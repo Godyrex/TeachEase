@@ -52,6 +52,10 @@ const adminRoutes: Routes = [
         loadChildren: () => import('./views/group/group.module').then(m => m.GroupModule)
     },
     {
+        path: 'session',
+        loadChildren: () => import('./views/session/session.module').then(m => m.SessionModule)
+    },
+    {
         path: 'tools',
         loadChildren: () => import('./views/tools/tools.module').then(m => m.ToolsModule)
     },

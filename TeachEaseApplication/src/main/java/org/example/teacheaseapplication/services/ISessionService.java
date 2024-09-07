@@ -14,4 +14,5 @@ public interface ISessionService {
     ResponseEntity<HttpStatus> updateSession(String sessionId, SessionRequest sessionRequest);
     ResponseEntity<HttpStatus> deleteSession(String sessionId);
 
+    ResponseEntity<List<SessionResponse>> getUpcomingSessionsByGroupId(String groupId);
 }

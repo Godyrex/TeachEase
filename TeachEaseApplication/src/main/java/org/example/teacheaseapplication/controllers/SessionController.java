@@ -21,27 +21,32 @@ public class SessionController {
     private final ISessionService sessionService;
     private final CustomAuthorization customAuthorization;
     @GetMapping("/{sessionId}")
-    @PreAuthorize("@customAuthorization.hasPermissionToSession(principal, #sessionId)")
+    @PreAuthorize("@customAuthorization.hasPermissionToSession( #sessionId)")
     public ResponseEntity<SessionResponse> getSession(@PathVariable String sessionId) {
         return sessionService.getSession(sessionId);
     }
     @GetMapping("/group/{groupId}")
-    @PreAuthorize("@customAuthorization.hasPermissionToGroup(principal, #groupId)")
+    @PreAuthorize("@customAuthorization.hasPermissionToGroup( #groupId)")
     public ResponseEntity<List<SessionResponse>> getSessionByGroupId(@PathVariable String groupId) {
         return sessionService.getSessionByGroupId(groupId);
     }
+    @GetMapping("/group/{groupId}/upcoming")
+    @PreAuthorize("@customAuthorization.hasPermissionToGroup( #groupId)")
+    public ResponseEntity<List<SessionResponse>> getUpcomingSessionsByGroupId(@PathVariable String groupId) {
+        return sessionService.getUpcomingSessionsByGroupId(groupId);
+    }
     @PostMapping
-    @PreAuthorize("hasRole('TEACHER')&&@customAuthorization.hasPermissionToGroup(principal, #groupId)")
+    @PreAuthorize("hasRole('TEACHER')&&@customAuthorization.hasPermissionToGroup( #groupId)")
     public ResponseEntity<HttpStatus> createSession(@RequestBody SessionRequest sessionRequest, @RequestParam String groupId) {
         return sessionService.createSession(sessionRequest, groupId);
     }
     @PutMapping("/{sessionId}")
-    @PreAuthorize("hasRole('TEACHER')&&@customAuthorization.hasPermissionToSession(principal, #sessionId)")
+    @PreAuthorize("hasRole('TEACHER')&&@customAuthorization.hasPermissionToSession( #sessionId)")
     public ResponseEntity<HttpStatus> updateSession(@PathVariable String sessionId, @RequestBody SessionRequest sessionRequest) {
         return sessionService.updateSession(sessionId, sessionRequest);
     }
     @DeleteMapping("/{sessionId}")
-    @PreAuthorize("hasRole('TEACHER')&&@customAuthorization.hasPermissionToSession(principal, #sessionId)")
+    @PreAuthorize("hasRole('TEACHER')&&@customAuthorization.hasPermissionToSession( #sessionId)")
     public ResponseEntity<HttpStatus> deleteSession(@PathVariable String sessionId) {
         return sessionService.deleteSession(sessionId);
     }

@@ -326,6 +326,45 @@ public class GroupServiceImpl implements IGroupService{
                 .currentPage(postsPage.getNumber())
                 .build());
     }
+
+    @Override
+    public ResponseEntity<HttpStatus> editPost(String groupId, String postId, PostRequest postRequest, MultipartFile[] files,  List<String> filesToBeDeleted) {
+        Group group = groupRepository.findById(groupId).orElseThrow(() -> new NoSuchElementException("Group not found"));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new NoSuchElementException("Post not found"));
+        post.setTitle(postRequest.getTitle());
+        post.setContent(postRequest.getContent());
+        if (files != null) {
+            if (post.getFiles() != null) {
+                post.getFiles().addAll(uploadFiles(files, group));
+            }else {
+                post.setFiles(uploadFiles(files, group));
+            }
+        }
+        if (filesToBeDeleted != null) {
+            if (post.getFiles() != null) {
+                for (String fileToBeDeleted : filesToBeDeleted) {
+                    for (String filePath : post.getFiles()) {
+                        String normalizedFilePath = filePath.replace("\\", "/");
+                        String extractedFileName = normalizedFilePath.substring(normalizedFilePath.lastIndexOf('/') + 1);
+                        log.info("Extracted file name {}", extractedFileName);
+                        log.info("File to be deleted {}", fileToBeDeleted);
+                        if (extractedFileName.equals(fileToBeDeleted)) {
+                            try {
+                                Files.delete(new File(normalizedFilePath).toPath());
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            post.getFiles().remove(filePath);
+                        }
+                    }
+                }
+            }
+        }
+        postRepository.save(post);
+        return ResponseEntity.ok(HttpStatus.OK);
+
+    }
+
     public List<String> returnOnlyFileName(List<String> files) {
         log.info("Returning only file name {}", files);
         return files.stream()

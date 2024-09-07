@@ -62,5 +62,17 @@ export class GroupService {
   deletePost(groupId: string, postID: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${groupId}/deletePost`, { params: { postID } });
   }
+  editPost(groupId: string, postID: string, postRequest: PostRequest, files: File[], filesToBeRemoved: string[]): Observable<void> {
+    const formData: FormData = new FormData();
+    formData.append('postId', postID);
+    formData.append('title', postRequest.title);
+    formData.append('content', postRequest.content);
+    formData.append('filesToBeDeleted', JSON.stringify(filesToBeRemoved));
+    // Append each file to the form data
+    for (let i = 0; i < files.length; i++) {
+      formData.append('files', files[i], files[i].name);
+    }
+    return this.http.put<void>(`${this.apiUrl}/${groupId}/editPost`, formData);
+  }
 
 }

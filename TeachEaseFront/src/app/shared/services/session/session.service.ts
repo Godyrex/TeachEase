@@ -19,6 +19,9 @@ export class SessionService {
   getSessionByGroupId(groupId: string): Observable<SessionResponse[]> {
     return this.http.get<SessionResponse[]>(`${this.apiUrl}/group/${groupId}`);
   }
+  getUpcomingSessionsByGroupId(groupId: string): Observable<SessionResponse[]> {
+    return this.http.get<SessionResponse[]>(`${this.apiUrl}/group/${groupId}/upcoming`);
+  }
 
   createSession(sessionRequest: SessionRequest, groupId: string): Observable<void> {
     return this.http.post<void>(this.apiUrl, sessionRequest, {

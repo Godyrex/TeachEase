@@ -14,6 +14,9 @@ import {AddPostFormComponent} from "../add-post-form/add-post-form.component";
 import {catchError, map, switchMap} from "rxjs/operators";
 import {PostResponse} from "../../../shared/models/group/PostResponse";
 import {PaginatedPostResponse} from "../../../shared/models/group/PaginatedPostResponse";
+import {AddSessionFormComponent} from "../../session/add-session-form/add-session-form.component";
+import {SessionService} from "../../../shared/services/session/session.service";
+import {SessionResponse} from "../../../shared/models/session/SessionResponse";
 
 @Component({
   selector: 'app-group',
@@ -23,12 +26,14 @@ import {PaginatedPostResponse} from "../../../shared/models/group/PaginatedPostR
 export class GroupComponent implements OnInit{
   private routeSub: Subscription;
   id: string;
+    loadingSessions = false;
   loadingPosts = false;
   loadingExtraPosts = false;
   group: GroupResponse;
   posts: PostResponse[];
   paginatedPostResponse: PaginatedPostResponse;
   user: UserResponse;
+  sessionResponses: SessionResponse[];
     displayTeacherInfo: string;
     imageSrc: any;
     page = 0;
@@ -42,7 +47,8 @@ export class GroupComponent implements OnInit{
       private groupService: GroupService,
       private sessionStorageService: SessionStorageService,
       private userService: UserService,
-      private sanitizer: DomSanitizer
+      private sanitizer: DomSanitizer,
+      private sessionService: SessionService
   ) { }
   ngOnInit(): void {
     this.routeSub = this.route.params.subscribe(params => {
@@ -53,6 +59,7 @@ export class GroupComponent implements OnInit{
       this.user = user;
     })
       this.getPosts();
+    this.getSessionUpcoming();
   }
   openUpdateGroupForm() {
     const dialogRef = this.modalService.open(UpdateGroupFormComponent, {
@@ -66,6 +73,31 @@ export class GroupComponent implements OnInit{
           this.fetchGroupAndTeacher();
         }
     );
+  }
+  openAddSessionForm() {
+      const dialogRef = this.modalService.open(AddSessionFormComponent, {
+        });
+        dialogRef.componentInstance.groupResponse = this.group;
+        dialogRef.result.then(
+            () => {
+                this.getSessionUpcoming()
+            },
+            () => {
+                this.getSessionUpcoming()
+            }
+        );
+  }
+  getSessionUpcoming(){
+    this.loadingSessions = true;
+    this.sessionService.getUpcomingSessionsByGroupId(this.id).subscribe((sessions) => {
+      console.log('Sessions:', sessions);
+        this.sessionResponses = sessions
+        this.loadingSessions = false;
+    }, (error) => {
+      console.error('Error fetching sessions:', error);
+      this.toastr.error('Error fetching sessions');
+        this.loadingSessions = false;
+    });
   }
   isTeacherInGroup(){
     return this.group.teacher == this.user.email;
@@ -193,6 +225,26 @@ export class GroupComponent implements OnInit{
     }
     );
   }
+  deleteSessionModal(content: any, sessionID: string) {
+    this.modalService.open(content, { ariaLabelledBy: 'delete session' })
+        .result.then((result) => {
+      if (result === 'Ok') {
+      this.deleteSession(sessionID);
+      }
+    }, (reason) => {
+      console.log('Err!', reason);
+    });
+  }
+  deleteSession(sessionID: string){
+    this.sessionService.deleteSession(sessionID).subscribe(() => {
+      this.getSessionUpcoming();
+      this.toastr.success('Session deleted successfully');
+    }, (error) => {
+        console.log(error);
+        this.toastr.error(error.error, 'Error');
+    }
+    );
+    }
   deleteGroup(){
     this.groupService.deleteGroup(this.id).subscribe((group) => {
       this.router.navigate(['/']);

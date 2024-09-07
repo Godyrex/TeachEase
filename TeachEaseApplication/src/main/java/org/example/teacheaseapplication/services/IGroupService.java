@@ -29,4 +29,6 @@ public interface IGroupService {
     ResponseEntity<PostResponse> getPost( String postId);
 
     ResponseEntity<PaginatedPostResponse> getPostsByGroup(String groupId, int page, int size);
+
+    ResponseEntity<HttpStatus> editPost(String groupId, String postId, PostRequest postRequest, MultipartFile[] files,  List<String> filesToBeDeleted);
 }

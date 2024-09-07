@@ -4,6 +4,4 @@ export interface SessionRequest {
     scheduledTime?: Date;
     url?: string;
     location?: string;
-    latitude?: number;
-    longitude?: number;
 }

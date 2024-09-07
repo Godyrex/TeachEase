@@ -5,7 +5,5 @@ export interface SessionResponse {
     scheduledTime?: Date;
     url?: string;
     location?: string;
-    latitude?: number;
-    longitude?: number;
     group?: string;
 }

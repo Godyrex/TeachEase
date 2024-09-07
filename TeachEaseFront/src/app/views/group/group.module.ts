@@ -17,7 +17,7 @@ import {InfiniteScrollModule} from "ngx-infinite-scroll";
     GroupComponent,
     AddGroupFormComponent,
     UpdateGroupFormComponent,
-    AddPostFormComponent,
+    AddPostFormComponent
   ],
     imports: [
         CommonModule,
