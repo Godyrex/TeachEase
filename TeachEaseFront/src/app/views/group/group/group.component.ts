@@ -18,6 +18,7 @@ import {AddSessionFormComponent} from "../../session/add-session-form/add-sessio
 import {SessionService} from "../../../shared/services/session/session.service";
 import {SessionResponse} from "../../../shared/models/session/SessionResponse";
 import {UpdateSessionFormComponent} from "../../session/update-session-form/update-session-form.component";
+import {ViewSessionComponent} from "../../session/view-session/view-session.component";
 
 @Component({
   selector: 'app-group',
@@ -34,6 +35,7 @@ export class GroupComponent implements OnInit{
   posts: PostResponse[];
   paginatedPostResponse: PaginatedPostResponse;
   user: UserResponse;
+  allSessions = false;
   sessionResponses: SessionResponse[];
     displayTeacherInfo: string;
     imageSrc: any;
@@ -82,10 +84,18 @@ export class GroupComponent implements OnInit{
         dialogRef.componentInstance.sessionResponse = sessionResponse;
         dialogRef.result.then(
             () => {
-                this.getSessionUpcoming();
-            },
+                if(this.allSessions){
+                    this.getAllSessions();
+                }else{
+                    this.getSessionUpcoming();
+                }
+                },
             () => {
-                this.getSessionUpcoming();
+                if(this.allSessions){
+                    this.getAllSessions();
+                }else{
+                    this.getSessionUpcoming();
+                }
             }
         );
     }
@@ -95,26 +105,72 @@ export class GroupComponent implements OnInit{
         dialogRef.componentInstance.groupResponse = this.group;
         dialogRef.result.then(
             () => {
-                this.getSessionUpcoming()
-            },
+                if(this.allSessions){
+                    this.getAllSessions();
+                }else{
+                    this.getSessionUpcoming();
+                }
+                },
             () => {
-                this.getSessionUpcoming()
+                if(this.allSessions){
+                    this.getAllSessions();
+                }else{
+                    this.getSessionUpcoming();
+                }
             }
         );
   }
-  getSessionUpcoming(){
-    this.loadingSessions = true;
-    this.sessionService.getUpcomingSessionsByGroupId(this.id).subscribe((sessions) => {
-      console.log('Sessions:', sessions);
-        this.sessionResponses = sessions
-        this.loadingSessions = false;
-    }, (error) => {
-      console.error('Error fetching sessions:', error);
-      this.toastr.error('Error fetching sessions');
-        this.loadingSessions = false;
+  openViewSession(sessionResponse: SessionResponse) {
+    const dialogRef = this.modalService.open(ViewSessionComponent, {
     });
-  }
-  isTeacherInGroup(){
+    dialogRef.componentInstance.sessionResponse = sessionResponse;
+    }getSessionUpcoming() {
+        this.loadingSessions = true;
+        this.sessionService.getUpcomingSessionsByGroupId(this.id).subscribe((sessions) => {
+            console.log('Sessions:', sessions);
+            this.sessionResponses = sessions.sort((a, b) => new Date(a.scheduledTime).getTime() - new Date(b.scheduledTime).getTime());
+            this.loadingSessions = false;
+            this.allSessions = false;
+        }, (error) => {
+            console.error('Error fetching sessions:', error);
+            this.toastr.error('Error fetching sessions');
+            this.loadingSessions = false;
+        });
+    }
+
+    getAllSessions() {
+        this.loadingSessions = true;
+        this.sessionService.getSessionByGroupId(this.id).subscribe((sessions) => {
+            console.log('Sessions:', sessions);
+            this.sessionResponses = sessions.sort((a, b) => new Date(a.scheduledTime).getTime() - new Date(b.scheduledTime).getTime());
+            this.loadingSessions = false;
+            this.allSessions = true;
+        }, (error) => {
+            console.error('Error fetching sessions:', error);
+            this.toastr.error('Error fetching sessions');
+            this.loadingSessions = false;
+        });
+    }
+    isSooner(scheduledTime: Date): boolean {
+        const now = new Date();
+        const sessionTime = new Date(scheduledTime);
+        return sessionTime.getTime() - now.getTime() <= (2 * 24 * 60 * 60 * 1000) && sessionTime > now; // Within 2 days and in the future
+    }
+
+    isLater(scheduledTime: Date): boolean {
+        const now = new Date();
+        const sessionTime = new Date(scheduledTime);
+        return sessionTime.getTime() - now.getTime() > (2 * 24 * 60 * 60 * 1000); // More than 2 days away
+    }
+
+    isPassed(scheduledTime: Date): boolean {
+        const now = new Date();
+        const sessionTime = new Date(scheduledTime);
+        return sessionTime < now; // Already happened
+    }
+
+
+    isTeacherInGroup(){
     return this.group.teacher == this.user.email;
   }
     searchMorePosts() {
@@ -252,7 +308,11 @@ export class GroupComponent implements OnInit{
   }
   deleteSession(sessionID: string){
     this.sessionService.deleteSession(sessionID).subscribe(() => {
+        if(this.allSessions){
+            this.getAllSessions();
+        }else{
       this.getSessionUpcoming();
+        }
       this.toastr.success('Session deleted successfully');
     }, (error) => {
         console.log(error);

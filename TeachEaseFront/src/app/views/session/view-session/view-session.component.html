@@ -1,0 +1,41 @@
+<div class="modal-header bg-primary text-white">
+    <h1 class="modal-title h4" id="modal-title">View Session</h1>
+    <button type="button" class="close text-white" aria-label="Close button" aria-describedby="modal-title" (click)="onCancel()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-6 form-group mb-4">
+            <label for="title" class="font-weight-bold text-secondary">Title</label>
+            <p id="title" class="form-control-plaintext">{{ sessionResponse.title }}</p>
+        </div>
+
+        <div class="col-md-6 form-group mb-4">
+            <label for="description" class="font-weight-bold text-secondary">Description</label>
+            <p id="description" class="form-control-plaintext">{{ sessionResponse.description }}</p>
+        </div>
+
+        <div class="col-md-6 form-group mb-4">
+            <label for="scheduledTime" class="font-weight-bold text-secondary">Scheduled Time</label>
+            <p id="scheduledTime" class="form-control-plaintext">{{ sessionResponse.scheduledTime | date: 'dd/MM/yyyy HH:mm' }}</p>
+        </div>
+
+        <div *ngIf="sessionResponse.location" class="col-md-6 form-group mb-4">
+            <label for="location" class="font-weight-bold text-secondary">Location</label>
+            <p id="location" class="form-control-plaintext">{{ sessionResponse.location }}</p>
+        </div>
+
+        <div *ngIf="sessionResponse.url" class="col-md-6 form-group mb-4">
+            <label for="url" class="font-weight-bold text-secondary">URL</label>
+            <p id="url" class="form-control-plaintext">
+                <a [href]="formattedUrl" target="_blank" class="text-info">{{ sessionResponse.url }}</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary btn-rounded" (click)="onCancel()">Close</button>
+</div>

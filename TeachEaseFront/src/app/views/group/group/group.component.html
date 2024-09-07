@@ -75,7 +75,9 @@
                 <div class="card mb-3">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5>Upcoming Sessions</h5>
-                        <button *ngIf="isTeacherInGroup()" (click)="openAddSessionForm()" class="btn btn-success btn-sm"><i class="i-Add"></i> New Session</button>
+                        <button *ngIf="isTeacherInGroup()" (click)="openAddSessionForm()" class="btn btn-success btn-sm mr-2"><i class="i-Add"></i> New Session</button>
+                        <button *ngIf="!allSessions" (click)="getAllSessions()" class="btn btn-info btn-sm mr-2"><i class="i-Eye"></i> View All</button>
+                        <button *ngIf="allSessions" (click)="getSessionUpcoming()" class="btn btn-info btn-sm mr-2"><i class="i-Eye"></i> View Latest</button>
                     </div>
                     <div class="card-body">
                         <div *ngIf="loadingSessions" class="loadscreen">
@@ -84,11 +86,41 @@
                         </div>
                         <div *ngIf="!loadingSessions && sessionResponses && sessionResponses.length > 0; else noSessionsTemplate">
                             <ul class="list-group">
-                                <li *ngFor="let session of sessionResponses" class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span>{{ session.title }} - {{ session.scheduledTime | date: 'dd/MM/yyyy HH:mm' }}</span>
-                                    <div>
-                                        <button *ngIf="isTeacherInGroup()" class="btn btn-warning btn-sm me-2" (click)="openUpdateSessionForm(session)"><i class="i-Pen-2"></i> Edit</button>
-                                        <button *ngIf="isTeacherInGroup()" (click)="deleteSessionModal(modalConfirmDeleteSession,session.id)" class="btn btn-danger btn-sm"><i class="i-Remove"></i> Delete</button>
+                                <li *ngFor="let session of sessionResponses"
+                                    class="list-group-item p-3 mb-2"
+                                    [ngClass]="{
+                'border-left border-info border-3': isSooner(session.scheduledTime),
+                'border-left border-secondary border-2': isLater(session.scheduledTime),
+                'text-muted bg-light': isPassed(session.scheduledTime)
+            }">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <!-- Session Title and Time -->
+                                        <span class="font-weight-bold text-dark">
+                    {{ session.title }} -
+                    <span [ngClass]="{'text-danger': isSooner(session.scheduledTime)}">
+                        {{ session.scheduledTime | date: 'dd/MM/yyyy HH:mm' }}
+                    </span>
+                </span>
+                                    </div>
+
+                                    <!-- Action Buttons -->
+                                    <div class="mt-3">
+                                        <button *ngIf="isTeacherInGroup()"
+                                                class="btn btn-warning btn-sm me-2 mr-2"
+                                                (click)="openUpdateSessionForm(session)">
+                                            <i class="i-Pen-2"></i> Edit
+                                        </button>
+
+                                        <button *ngIf="isTeacherInGroup()"
+                                                (click)="deleteSessionModal(modalConfirmDeleteSession, session.id)"
+                                                class="btn btn-danger btn-sm me-2 mr-2">
+                                            <i class="i-Remove"></i> Delete
+                                        </button>
+
+                                        <button (click)="openViewSession(session)"
+                                                class="btn btn-info btn-sm me-2 mr-2">
+                                            <i class="i-Eye"></i> View
+                                        </button>
                                     </div>
                                 </li>
                             </ul>

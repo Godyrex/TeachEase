@@ -6,12 +6,14 @@ import { AddSessionFormComponent } from './add-session-form/add-session-form.com
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {SharedComponentsModule} from "../../shared/components/shared-components.module";
 import { UpdateSessionFormComponent } from './update-session-form/update-session-form.component';
+import { ViewSessionComponent } from './view-session/view-session.component';
 
 
 @NgModule({
   declarations: [
     AddSessionFormComponent,
-    UpdateSessionFormComponent
+    UpdateSessionFormComponent,
+    ViewSessionComponent
   ],
   imports: [
     CommonModule,
