@@ -45,16 +45,6 @@ export class AddSessionFormComponent {
     url: ['', [Validators.minLength(3), Validators.maxLength(255)]]
   }
   );
-dateValidator(controlName: string): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const date = new Date(control.value);
-      const currentDate = new Date();
-      if (date < currentDate) {
-        return { 'invalidDate': true };
-      }
-      return null;
-    };
-}
   shouldShowErrorAddSession(controlName: string, errorName: string): boolean {
     const control = this.addSessionForm.get(controlName);
     return control && control.errors && control.errors[errorName] && (control.dirty || control.touched);

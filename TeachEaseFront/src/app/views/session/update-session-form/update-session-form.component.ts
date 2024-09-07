@@ -3,10 +3,17 @@ import {SessionRequest} from "../../../shared/models/session/SessionRequest";
 import {GroupResponse} from "../../../shared/models/group/GroupResponse";
 import {ToastrService} from "ngx-toastr";
 import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
-import {FormBuilder, Validators} from "@angular/forms";
+import {AbstractControl, AsyncValidatorFn, FormBuilder, ValidationErrors, Validators} from "@angular/forms";
 import {SessionService} from "../../../shared/services/session/session.service";
 import {SessionResponse} from "../../../shared/models/session/SessionResponse";
-
+import {Observable, of} from "rxjs";
+export function futureDateValidator(): AsyncValidatorFn {
+  return (control: AbstractControl): Observable<ValidationErrors | null> => {
+    const date = new Date(control.value);
+    const currentDate = new Date();
+    return of(date > currentDate ? null : { 'invalidDate': true });
+  };
+}
 @Component({
   selector: 'app-update-session-form',
   templateUrl: './update-session-form.component.html',
@@ -43,7 +50,7 @@ export class UpdateSessionFormComponent implements OnInit {
   updateSessionForm = this.formBuilder.group({
     title: ['', [Validators.required, Validators.maxLength(255), Validators.minLength(3)]],
     description: ['', [Validators.required, Validators.maxLength(255), Validators.minLength(3)]],
-    scheduledTime: [new Date(),[Validators.required]],
+    scheduledTime: [new Date(),[Validators.required],[futureDateValidator()]],
     location: ['', [Validators.minLength(3), Validators.maxLength(255)]],
     url: ['', [Validators.minLength(3), Validators.maxLength(255)]]
   });
