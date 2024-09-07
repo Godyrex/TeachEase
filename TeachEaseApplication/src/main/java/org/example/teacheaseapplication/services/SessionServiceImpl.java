@@ -90,6 +90,10 @@ public class SessionServiceImpl implements ISessionService{
     @Override
     public ResponseEntity<HttpStatus> deleteSession(String sessionId) {
         Session session = sessionRepository.findById(sessionId).orElseThrow(() -> new NoSuchElementException("Session not found"));
+        groupRepository.findById(session.getGroup()).ifPresent(group -> {
+            group.getSessions().remove(sessionId);
+            groupRepository.save(group);
+        });
         sessionRepository.delete(session);
         return ResponseEntity.ok(HttpStatus.OK);
     }

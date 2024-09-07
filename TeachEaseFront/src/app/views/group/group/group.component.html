@@ -75,7 +75,7 @@
                 <div class="card mb-3">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5>Upcoming Sessions</h5>
-                        <button *ngIf="isTeacherInGroup()" (click)="openAddSessionForm()" class="btn btn-success btn-sm"><i class="fas fa-calendar-plus"></i> New Session</button>
+                        <button *ngIf="isTeacherInGroup()" (click)="openAddSessionForm()" class="btn btn-success btn-sm"><i class="i-Add"></i> New Session</button>
                     </div>
                     <div class="card-body">
                         <div *ngIf="loadingSessions" class="loadscreen">
@@ -87,8 +87,8 @@
                                 <li *ngFor="let session of sessionResponses" class="list-group-item d-flex justify-content-between align-items-center">
                                     <span>{{ session.title }} - {{ session.scheduledTime | date: 'dd/MM/yyyy HH:mm' }}</span>
                                     <div>
-                                        <button class="btn btn-warning btn-sm me-2"><i class="fas fa-edit"></i> Edit</button>
-                                        <button *ngIf="isTeacherInGroup()" (click)="deleteSessionModal(modalConfirmDeleteSession,session.id)" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</button>
+                                        <button *ngIf="isTeacherInGroup()" class="btn btn-warning btn-sm me-2" (click)="openUpdateSessionForm(session)"><i class="i-Pen-2"></i> Edit</button>
+                                        <button *ngIf="isTeacherInGroup()" (click)="deleteSessionModal(modalConfirmDeleteSession,session.id)" class="btn btn-danger btn-sm"><i class="i-Remove"></i> Delete</button>
                                     </div>
                                 </li>
                             </ul>

@@ -17,6 +17,7 @@ import {PaginatedPostResponse} from "../../../shared/models/group/PaginatedPostR
 import {AddSessionFormComponent} from "../../session/add-session-form/add-session-form.component";
 import {SessionService} from "../../../shared/services/session/session.service";
 import {SessionResponse} from "../../../shared/models/session/SessionResponse";
+import {UpdateSessionFormComponent} from "../../session/update-session-form/update-session-form.component";
 
 @Component({
   selector: 'app-group',
@@ -74,6 +75,20 @@ export class GroupComponent implements OnInit{
         }
     );
   }
+
+    openUpdateSessionForm(sessionResponse: SessionResponse) {
+        const dialogRef = this.modalService.open(UpdateSessionFormComponent, {
+        });
+        dialogRef.componentInstance.sessionResponse = sessionResponse;
+        dialogRef.result.then(
+            () => {
+                this.getSessionUpcoming();
+            },
+            () => {
+                this.getSessionUpcoming();
+            }
+        );
+    }
   openAddSessionForm() {
       const dialogRef = this.modalService.open(AddSessionFormComponent, {
         });
