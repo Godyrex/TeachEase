@@ -1,3 +1,5 @@
+import {StudentPresenceRequest} from "./StudentPresenceRequest";
+
 export interface PresenceRequest {
-    presences: { [key: string]: boolean };
+    presences: StudentPresenceRequest[];
 }

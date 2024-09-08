@@ -5,12 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PresenceRequest {
-    private List<StudentPresenceRequest> presences;
+public class StudentPresenceRequest {
+    private String student;
+    private boolean present;
+
 }

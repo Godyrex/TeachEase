@@ -1,0 +1,25 @@
+<div class="modal-header bg-primary text-white">
+    <h1 class="modal-title h4" id="modal-title">View Student Presence History</h1>
+    <button type="button" class="close text-white" aria-label="Close button" aria-describedby="modal-title" (click)="onCancel()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-12 form-group mb-4" *ngFor="let presence of presenceHistory">
+            <label class="font-weight-bold text-secondary">Session Date</label>
+            <p class="form-control-plaintext">{{ presence.sessionDate | date: 'dd/MM/yyyy HH:mm' }}</p>
+
+            <label class="font-weight-bold text-secondary">Group</label>
+            <p class="form-control-plaintext">{{ groupResponse.name}}</p>
+
+            <label class="font-weight-bold text-secondary">Present</label>
+            <p class="form-control-plaintext">{{ presence.present ? 'Yes' : 'No' }}</p>
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary btn-rounded" (click)="onCancel()">Close</button>
+</div>

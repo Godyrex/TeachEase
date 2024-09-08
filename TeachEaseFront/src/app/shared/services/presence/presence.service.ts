@@ -13,9 +13,7 @@ export class PresenceService {
   constructor(private http: HttpClient) {}
 
   createPresences(presenceRequest: PresenceRequest, sessionId: string): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/create`, presenceRequest, {
-      params: { sessionId }
-    });
+    return this.http.post<void>(`${this.apiUrl}/create`, presenceRequest, {params: {sessionId}});
   }
 
   getPresencesBySession(sessionId: string): Observable<PresenceResponse[]> {
@@ -24,5 +22,8 @@ export class PresenceService {
 
   getPresencesByStudentAndGroup(groupId: string): Observable<PresenceResponse[]> {
     return this.http.get<PresenceResponse[]>(`${this.apiUrl}/student/group/${groupId}`);
+  }
+  getLatestPresenceByStudentAndGroup(groupId: string): Observable<PresenceResponse[]> {
+    return this.http.get<PresenceResponse[]>(`${this.apiUrl}/student-latest/group/${groupId}`);
   }
 }

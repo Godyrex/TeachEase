@@ -30,7 +30,7 @@
                             [scrollbarV]="true"
                             [scrollbarH]="true"
                             [externalPaging]="true"
-                            [count]="totalItems"
+                            [count]="itemsPerPage"
                             [offset]="(currentPage - 1) * itemsPerPage"
                             [limit]="itemsPerPage"
                             [rows]="users | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage, totalItems: totalItems }">

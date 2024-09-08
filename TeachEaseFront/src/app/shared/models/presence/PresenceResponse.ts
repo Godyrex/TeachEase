@@ -4,5 +4,5 @@ export interface PresenceResponse {
     group?: string;
     session?: string;
     sessionDate?: Date;
-    presence?: boolean;
+    present?: boolean;
 }

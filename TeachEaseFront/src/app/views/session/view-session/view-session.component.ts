@@ -1,11 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {SessionRequest} from "../../../shared/models/session/SessionRequest";
 import {SessionResponse} from "../../../shared/models/session/SessionResponse";
-import {ToastrService} from "ngx-toastr";
 import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
-import {FormBuilder, Validators} from "@angular/forms";
-import {SessionService} from "../../../shared/services/session/session.service";
-import {futureDateValidator} from "../update-session-form/update-session-form.component";
 
 @Component({
   selector: 'app-view-session',

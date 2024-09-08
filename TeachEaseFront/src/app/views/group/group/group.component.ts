@@ -21,6 +21,9 @@ import {UpdateSessionFormComponent} from "../../session/update-session-form/upda
 import {ViewSessionComponent} from "../../session/view-session/view-session.component";
 import {PresenceResponse} from "../../../shared/models/presence/PresenceResponse";
 import {PresenceService} from "../../../shared/services/presence/presence.service";
+import {PresenceRequest} from "../../../shared/models/presence/PresenceRequest";
+import {MarkPresenceComponent} from "../../presence/mark-presence/mark-presence.component";
+import {ViewAllComponent} from "../../presence/view-all/view-all.component";
 
 @Component({
   selector: 'app-group',
@@ -68,7 +71,14 @@ export class GroupComponent implements OnInit{
     })
       this.getPosts();
     this.getSessionUpcoming();
+    this.getLatestPresence();
   }
+    openMarkPresence(session: SessionResponse) {
+        const dialogRef = this.modalService.open(MarkPresenceComponent, {
+        });
+        dialogRef.componentInstance.sessionResponse = session;
+        dialogRef.componentInstance.groupResponse = this.group;
+    }
   openUpdateGroupForm() {
     const dialogRef = this.modalService.open(UpdateGroupFormComponent, {
     });
@@ -142,6 +152,15 @@ export class GroupComponent implements OnInit{
             this.loadingSessions = false;
         });
     }
+    getLatestPresence(){
+        this.presenceService.getLatestPresenceByStudentAndGroup(this.id).subscribe((presence) => {
+            console.log('Latest Presence:', presence);
+            this.studentPresences = presence;
+        }, (error) => {
+            console.error('Error fetching latest presence:', error);
+            this.toastr.error('Error fetching latest presence');
+        });
+    }
     getStudentPresence(){
         this.presenceService.getPresencesByStudentAndGroup(this.id).subscribe((presences) => {
             console.log('Presences:', presences);
@@ -186,6 +205,9 @@ export class GroupComponent implements OnInit{
     isTeacherInGroup(){
     return this.group.teacher == this.user.email;
   }
+    isStudentInGroup(){
+        return this.group.students.includes(this.user.email);
+    }
     searchMorePosts() {
         if(this.paginatedPostResponse && this.paginatedPostResponse.totalPages > this.page+1) {
             this.loadingExtraPosts = true;
@@ -231,7 +253,6 @@ export class GroupComponent implements OnInit{
                 }
 
                 this.group = group;
-
                 if (this.group.teacher) {
                     // Fetch the teacher's profile image
                     this.userService.getProfileImageBlobUrl(this.group.teacher).subscribe((blob: Blob) => {
@@ -385,6 +406,11 @@ export class GroupComponent implements OnInit{
         }
     );
   }
+    ViewAllPresences() {
+        const dialogRef = this.modalService.open(ViewAllComponent, {
+        });
+        dialogRef.componentInstance.groupResponse = this.group;
+    }
 
 
 }

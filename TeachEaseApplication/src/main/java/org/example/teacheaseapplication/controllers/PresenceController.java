@@ -23,7 +23,7 @@ public class PresenceController {
     private final CustomAuthorization customAuthorization;
     @PostMapping("/create")
     @PreAuthorize("hasRole('TEACHER')&&@customAuthorization.hasPermissionToSession(#sessionId)")
-    public ResponseEntity<HttpStatus> createPresences(@RequestBody PresenceRequest presenceRequest, String sessionId) {
+    public ResponseEntity<HttpStatus> createPresences(@RequestBody PresenceRequest presenceRequest,@RequestParam String sessionId) {
         return iPresenceService.createPresences(presenceRequest, sessionId);
     }
     @GetMapping("/session/{sessionId}")
@@ -35,6 +35,11 @@ public class PresenceController {
     @PreAuthorize("@customAuthorization.hasPermissionToGroup(#groupId)")
     public ResponseEntity<List<PresenceResponse>> getPresencesByStudentAndGroup(Principal principal, @PathVariable String groupId) {
         return iPresenceService.getPresencesByStudentAndGroup(principal, groupId);
+    }
+    @GetMapping("/student-latest/group/{groupId}")
+    @PreAuthorize("@customAuthorization.hasPermissionToGroup(#groupId)")
+    public ResponseEntity<List<PresenceResponse>> getLatestPresencesByStudentAndGroup(Principal principal, @PathVariable String groupId) {
+        return iPresenceService.getLatestPresencesByStudentAndGroup(principal, groupId);
     }
 
 }

@@ -10,5 +10,7 @@ import java.util.Optional;
 @Repository
 public interface PresenceRepository extends MongoRepository<Presence,String> {
     Optional<List<Presence>> findBySession(String sessionId);
-    Optional<List<Presence>> findByStudentAndGroup(String studentId, String groupId);
+    Optional<List<Presence>> findByStudentAndGroupOrderBySessionDateDesc(String studentId, String groupId);
+    Optional<Presence> findBySessionAndStudent(String sessionId, String studentId);
+    Optional<List<Presence>> findTop5ByStudentAndGroupOrderBySessionDateDesc(String studentId, String groupId);
 }

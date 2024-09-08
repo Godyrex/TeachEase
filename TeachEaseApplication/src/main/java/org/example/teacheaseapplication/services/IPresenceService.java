@@ -14,4 +14,6 @@ public interface IPresenceService {
   ResponseEntity<List<PresenceResponse>>   getPresencesBySession(String sessionId);
   ResponseEntity<List<PresenceResponse>>   getPresencesByStudentAndGroup(Principal principal, String groupId);
   void   updatePresences(String id, PresenceRequest presenceRequest);
+
+  ResponseEntity<List<PresenceResponse>> getLatestPresencesByStudentAndGroup(Principal principal, String groupId);
 }

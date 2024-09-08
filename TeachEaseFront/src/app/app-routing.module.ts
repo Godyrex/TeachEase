@@ -56,6 +56,10 @@ const adminRoutes: Routes = [
         loadChildren: () => import('./views/session/session.module').then(m => m.SessionModule)
     },
     {
+        path: 'presence',
+        loadChildren: () => import('./views/presence/presence.module').then(m => m.PresenceModule)
+    },
+    {
         path: 'tools',
         loadChildren: () => import('./views/tools/tools.module').then(m => m.ToolsModule)
     },
